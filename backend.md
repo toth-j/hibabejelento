@@ -16,15 +16,11 @@
 
 | Végpont                      | Leírás                                                         |
 | ---------------------------- | -------------------------------------------------------------- |
-| POST `/api/register`         | Felhasználó regisztrálása (admin által)                        |
 | POST `/api/login`            | Bejelentkezés, JWT token generálása                            |
 | GET `/api/profil`            | Saját felhasználói adatok lekérdezése                          |
 | GET `/api/hibak`             | Hibák listázása                                                |
-| GET `/api/hibak/:id`         | Egyedi hiba adatainak lekérdezése                              |
 | POST `/api/hibak`            | Új hiba bejelentése (csak tanároknak)                          |
 | GET `/api/felhasznalok`      | Felhasználók listázása (csak admin)                            |
-| DELETE `/api/felhasznalok/:id`| Felhasználó törlése (csak admin)                               |
-| PUT `/api/hibak/:id`         | Hiba adatainak szerkesztése (bejelentő/admin, ha „bejelentve”) |
 | PUT `/api/hibak/:id/javitas` | Hiba kijavítottra állítása (karbantartó/admin)                 |
 
 * * *
@@ -33,35 +29,7 @@
 
 * * *
 
-1️⃣ POST `/api/register`
----------------------------
-
-### Leírás
-
-Új felhasználó regisztrálása (csak admin).
-
-### Kérés body
-
-    {
-      "nev": "Kiss Péter",
-      "felhasznalonev": "kissp",
-      "jelszo": "jelszo123",
-      "szerep": "tanar"    // lehet: "tanar", "karbantarto", "admin"
-    }
-
-### Válasz
-
-* **201 Created** – új felhasználó JSON adatai (id, nev, felhasznalonev, szerep).
-
-* **400 Bad Request** – hiányzó vagy érvénytelen mező.
-
-* **409 Conflict** – a megadott felhasználónév már létezik.
-
-* **403 Forbidden** – ha nem admin próbál regisztrálni.
-
-* * *
-
-2️⃣ POST `/api/login`
+1️⃣ POST `/api/login`
 ------------------------
 
 ### Leírás
@@ -88,7 +56,7 @@ Bejelentkezés és JWT token generálás.
 
 * * *
 
-3️⃣ GET `/api/profil`
+2️⃣ GET `/api/profil`
 ------------------------
 
 ### Leírás
@@ -106,7 +74,7 @@ A bejelentkezett felhasználó adatainak lekérdezése.
 
 * * *
 
-4️⃣ GET `/api/hibak`
+3️⃣ GET `/api/hibak`
 -----------------------
 
 ### Leírás
@@ -137,35 +105,7 @@ A hibák listázása.
 
 * * *
 
-5️⃣ GET `/api/hibak/:id`
----------------------------
-
-### Leírás
-
-Egyedi hibabejelentés adatainak lekérdezése.
-
-### Válasz
-
-* **200 OK** – hiba JSON adatai (a `GET /api/hibak` listában szereplő formátummal megegyezően).
-
-    ```json
-    {
-      "id": 1,
-      "datum": "2025-06-01",
-      "bejelento_id": 1,
-      "terem": "101-es terem",
-      "leiras": "Eltört egy szék.",
-      "allapot": "bejelentve",
-      "javito_id": null,
-      "javitas_datuma": null
-    }
-    ```
-
-* **404 Not Found** – ha a megadott ID-val nem létezik hiba.
-
-* * *
-
-5️⃣ POST `/api/hibak`
+4️⃣ POST `/api/hibak`
 ------------------------
 
 ### Leírás
@@ -195,7 +135,7 @@ Egyedi hibabejelentés adatainak lekérdezése.
 
 * * *
 
-9️⃣ GET `/api/felhasznalok`
+5️⃣ GET `/api/felhasznalok`
 -----------------------------
 
 ### Leírás
@@ -228,53 +168,7 @@ Az összes felhasználó listázása (csak admin).
 
 * * *
 
-🔟 DELETE `/api/felhasznalok/:id`
------------------------------------
-
-### Leírás
-
-Felhasználó törlése a megadott ID alapján (csak admin).
-
-### Válasz
-
-* **200 OK** – sikeres törlés üzenettel.
-  ```json
-  { "message": "Felhasználó sikeresen törölve." }
-  ```
-
-6️⃣ PUT `/api/hibak/:id`
----------------------------
-
-### Leírás
-
-Hibabejelentés szerkesztése (csak a bejelentő vagy admin, ha a hiba még „bejelentve”). **Mind a `terem`, mind a `leiras` mező megadása kötelező.**
-
-### Kérés body
-
-    {
-      "terem": "101-es terem (újra)",
-      "leiras": "A szék lába eltört, cserélni kell."
-    }
-
-### Válasz
-
-* **200 OK** – frissített hiba JSON.
-
-* **400 Bad Request** – ha a `terem` vagy `leiras` mező hiányzik.
-
-  ```json
-  { "error": "A terem és a leírás megadása kötelező a módosításhoz." }
-  ```
-
-* **400 Bad Request** – ha a hiba állapota már „kijavitva”.
-
-  ```json
-  { "error": "Kijavított hiba nem szerkeszthető." }
-  ```
-
-* * *
-
-7️⃣ PUT `/api/hibak/:id/javitas`
+6️⃣ PUT `/api/hibak/:id/javitas`
 -----------------------------------
 
 ### Leírás
@@ -314,15 +208,11 @@ A hiba „kijavítva” állapotra állítása (csak karbantartó vagy admin).
 
 | Végpont                      | Tanár            | Karbantartó | Admin |
 | ---------------------------- | ---------------- | ----------- | ----- |
-| POST `/api/register`         | ❌                | ❌           | ✅     |
 | POST `/api/login`            | ✅                | ✅           | ✅     |
 | GET `/api/profil`            | ✅                | ✅           | ✅     |
 | GET `/api/hibak`             | ✅                | ✅           | ✅     |
-| GET `/api/hibak/:id`         | ✅                | ✅           | ✅     |
 | POST `/api/hibak`            | ✅                | ❌           | ✅     |
 | GET `/api/felhasznalok`      | ❌                | ❌           | ✅     |
-| DELETE `/api/felhasznalok/:id`| ❌                | ❌           | ✅     |
-| PUT `/api/hibak/:id`         | ✅ (ha bejelentő) | ❌           | ✅     |
 | PUT `/api/hibak/:id/javitas` | ❌                | ✅           | ✅     |
 
 * * *

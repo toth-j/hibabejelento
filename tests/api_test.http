@@ -5,7 +5,7 @@
 # Felhasználókezelés
 # ==============================================================================
 
-### 2. Admin bejelentkezése (token kinyerése)
+### 1. Admin bejelentkezése (token kinyerése) - /api/login
 #> VÁRT EREDMÉNY: 200 OK - Sikeres bejelentkezés, token visszaküldve
 # @name loginAdmin
 POST {{baseUrl}}/login
@@ -19,7 +19,7 @@ Content-Type: application/json
 ### Token mentése változóba
 @adminToken = {{loginAdmin.response.body.token}}
 
-### 2. Tanár bejelentkezése (token kinyerése)
+### 1. Tanár bejelentkezése (token kinyerése) - /api/login
 #> VÁRT EREDMÉNY: 200 OK - Sikeres bejelentkezés, token visszaküldve
 # @name loginTanar
 POST {{baseUrl}}/login
@@ -33,7 +33,7 @@ Content-Type: application/json
 ### Token mentése változóba
 @tanarToken = {{loginTanar.response.body.token}}
 
-### 2. Karbantartó bejelentkezése (token kinyerése)
+### 1. Karbantartó bejelentkezése (token kinyerése) - /api/login
 #> VÁRT EREDMÉNY: 200 OK - Sikeres bejelentkezés, token visszaküldve
 # @name loginKarbantarto
 POST {{baseUrl}}/login
@@ -47,66 +47,24 @@ Content-Type: application/json
 ### Token mentése változóba
 @karbantartoToken = {{loginKarbantarto.response.body.token}}
 
-### 1. Új felhasználó regisztrálása (Admin által)
-#> VÁRT EREDMÉNY: 201 Created - Felhasználó sikeresen regisztrálva 
-#(vagy 409 Conflict, ha a felhasználónév már létezik)
-# @name registerUser
-POST {{baseUrl}}/register
-Authorization: Bearer {{adminToken}}
-Content-Type: application/json
-
-{
-  "nev": "Teszt Elek",
-  "felhasznalonev": "tesztelek",
-  "jelszo": "tesztjelszo",
-  "szerep": "tanar"
-}
-
-### 1. Új felhasználó regisztrálása (Tanár által - SIKERTELEN)
-#> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez.
-POST {{baseUrl}}/register
-Authorization: Bearer {{tanarToken}}
-Content-Type: application/json
-
-{
-  "nev": "Jogtalan Teszt",
-  "felhasznalonev": "jogtalanteszt",
-  "jelszo": "tesztjelszo",
-  "szerep": "karbantarto"
-}
-
-### 3. Profiladatok lekérdezése (Admin)
+### 2. Profiladatok lekérdezése (Admin) - /api/profil
 #> VÁRT EREDMÉNY: 200 OK - Admin profiladatok sikeresen lekérdezve
 GET {{baseUrl}}/profil
 Authorization: Bearer {{adminToken}}
 
-### 3. Profiladatok lekérdezése (Tanár)
+### 2. Profiladatok lekérdezése (Tanár) - /api/profil
 #> VÁRT EREDMÉNY: 200 OK - Tanár profiladatok sikeresen lekérdezve
 GET {{baseUrl}}/profil
 Authorization: Bearer {{tanarToken}}
 
-### 9. Felhasználók listázása (Admin által)
+### 5. Felhasználók listázása (Admin által) - /api/felhasznalok
 #> VÁRT EREDMÉNY: 200 OK - Felhasználók listája sikeresen lekérdezve
 GET {{baseUrl}}/felhasznalok
 Authorization: Bearer {{adminToken}}
 
-### 9. Felhasználók listázása (Tanár által - SIKERTELEN)
+### 5. Felhasználók listázása (Tanár által) - /api/felhasznalok
 #> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez.
 GET {{baseUrl}}/felhasznalok
-Authorization: Bearer {{tanarToken}}
-
-### 10. Felhasználó törlése (Admin által - Teszt Elek törlése)
-#> VÁRT EREDMÉNY: 200 OK - Felhasználó sikeresen törölve.
-# Feltételezzük, hogy a "tesztelek" felhasználó ID-je 4 (vagy a regisztráció utáni ID)
-# Ezt a tesztet futtatás előtt manuálisan ellenőrizni kell, vagy dinamikusan kinyerni az ID-t a registerUser válaszából, ha a teszt futtató környezet támogatja.
-# Jelenleg feltételezzük, hogy a "tesztelek" ID-je 4.
-DELETE {{baseUrl}}/felhasznalok/4
-Authorization: Bearer {{adminToken}}
-
-### 10. Felhasználó törlése (Tanár által - SIKERTELEN)
-#> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez.
-# Feltételezzük, hogy a "tesztelek" felhasználó ID-je 4.
-DELETE {{baseUrl}}/felhasznalok/4
 Authorization: Bearer {{tanarToken}}
 
 ###
@@ -114,32 +72,22 @@ Authorization: Bearer {{tanarToken}}
 # Hibakezelés
 # ==============================================================================
 
-### 4. Összes hiba listázása (Tanárként)
+### 3. Összes hiba listázása (Tanárként) - /api/hibak
 #> VÁRT EREDMÉNY: 200 OK - Hibák listája sikeresen lekérdezve
 GET {{baseUrl}}/hibak
 Authorization: Bearer {{tanarToken}}
 
-### 4. Csak "bejelentve" állapotú hibák listázása
+### 3. Csak "bejelentve" állapotú hibák listázása - /api/hibak
 #> VÁRT EREDMÉNY: 200 OK - "Bejelentve" állapotú hibák listája sikeresen lekérdezve
 GET {{baseUrl}}/hibak?allapot=bejelentve
 Authorization: Bearer {{tanarToken}}
 
-### 4. Csak "kijavitva" állapotú hibák listázása
+### 3. Csak "kijavitva" állapotú hibák listázása - /api/hibak
 #> VÁRT EREDMÉNY: 200 OK - "Kijavítva" állapotú hibák listája sikeresen lekérdezve
 GET {{baseUrl}}/hibak?allapot=kijavítva
 Authorization: Bearer {{tanarToken}}
 
-### 5. Egyedi hiba adatainak lekérdezése (ID: 1)
-#> VÁRT EREDMÉNY: 200 OK - Hiba adatai sikeresen lekérdezve (ha létezik az ID) vagy 404 Not Found
-GET {{baseUrl}}/hibak/1
-Authorization: Bearer {{tanarToken}}
-
-### 5. Egyedi hiba adatainak lekérdezése (Nem létező ID: 999)
-#> VÁRT EREDMÉNY: 404 Not Found - A megadott ID-val nem létezik hiba
-GET {{baseUrl}}/hibak/999
-Authorization: Bearer {{tanarToken}}
-
-### 6. Új hiba bejelentése (Tanár által)
+### 4. Új hiba bejelentése (Tanár által) - /api/hibak
 #> VÁRT EREDMÉNY: 201 Created - Új hiba sikeresen bejelentve
 # @name ujHibaTanar
 POST {{baseUrl}}/hibak
@@ -154,7 +102,7 @@ Content-Type: application/json
 ### Új hiba ID kinyerése
 @ujHibaIdTanar = {{ujHibaTanar.response.body.id}}
 
-### 6. Új hiba bejelentése (Admin által)
+### 4. Új hiba bejelentése (Admin által) - /api/hibak
 #> VÁRT EREDMÉNY: 201 Created - Új hiba sikeresen bejelentve
 # @name ujHibaAdmin
 POST {{baseUrl}}/hibak
@@ -169,7 +117,7 @@ Content-Type: application/json
 ### Új hiba ID kinyerése
 @ujHibaIdAdmin = {{ujHibaAdmin.response.body.id}}
 
-### 6. Hiba bejelentése (Karbantartó által - SIKERTELENNEK KELL LENNIE)
+### 4. Hiba bejelentése (Karbantartó által - SIKERTELENNEK KELL LENNIE) - /api/hibak
 #> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez
 POST {{baseUrl}}/hibak
 Authorization: Bearer {{karbantartoToken}}
@@ -180,80 +128,19 @@ Content-Type: application/json
   "leiras": "Elfogyott a csavar."
 }
 
-### 7. Hiba szerkesztése (Bejelentő tanár által, ha "bejelentve")
-# Feltételezzük, hogy a {{ujHibaIdTanar}} létezik és "bejelentve" állapotú
-#> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen szerkesztve 
-# Feltételezzük, hogy a {{ujHibaIdTanar}} létezik és "bejelentve" állapotú
-PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}
-Authorization: Bearer {{tanarToken}}
-Content-Type: application/json
-
-{
-  "terem": "303-as labor (frissítve)",
-  "leiras": "Az ablak nem záródik rendesen, a kilincs is laza."
-}
-
-### 7. Hiba szerkesztése (Admin által, ha "bejelentve")
-#> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen szerkesztve
-# Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
-PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}
-Authorization: Bearer {{adminToken}}
-Content-Type: application/json
-
-{
-  "terem": "Tornaterem (admin frissítés)",
-  "leiras": "Kosárlabda palánk meglazult, javításra szorul."
-}
-
-### 7. Hiba szerkesztése (Admin által, csak TEREM megadásával - SIKERTELEN)
-#> VÁRT EREDMÉNY: 400 Bad Request - A terem és a leírás megadása kötelező a módosításhoz.
-# Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
-PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}
-Authorization: Bearer {{adminToken}}
-Content-Type: application/json
-
-{
-  "terem": "Csak terem frissítés (admin)"
-  // "leiras" szándékosan hiányzik
-}
-
-### 7. Hiba szerkesztése (Admin által, csak LEÍRÁS megadásával - SIKERTELEN)
-#> VÁRT EREDMÉNY: 400 Bad Request - A terem és a leírás megadása kötelező a módosításhoz.
-# Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
-PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}
-Authorization: Bearer {{adminToken}}
-Content-Type: application/json
-
-{
-  "leiras": "Csak leírás frissítés (admin)"
-  // "terem" szándékosan hiányzik
-}
-
-### 8. Hiba kijavítottra állítása (Karbantartó által)
+### 6. Hiba kijavítottra állítása (Karbantartó által) - /api/hibak/:id/javitas
 #> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen kijavítottra állítva
 # Feltételezzük, hogy a {{ujHibaIdTanar}} létezik és "bejelentve" állapotú
 PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}/javitas
 Authorization: Bearer {{karbantartoToken}}
 
-### 8. Hiba kijavítottra állítása (Admin által)
+### 6. Hiba kijavítottra állítása (Admin által) - /api/hibak/:id/javitas
 #> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen kijavítottra állítva 
 # Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
 PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}/javitas
 Authorization: Bearer {{adminToken}}
 
-### 7. Hiba szerkesztése (Miután "kijavitva")
-#> VÁRT EREDMÉNY: 400 Bad Request - Kijavított hiba nem szerkeszthető
-# Feltételezzük, hogy a {{ujHibaIdTanar}} már "kijavitva"
-PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}
-Authorization: Bearer {{tanarToken}}
-Content-Type: application/json
-
-{
-  "terem": "303-as labor (újabb frissítés)",
-  "leiras": "Mégsem jó."
-}
-
-### 8. Hiba kijavítottra állítása (Ha már "kijavitva" - SIKERTELENNEK KELL LENNIE)
+### 6. Hiba kijavítottra állítása (Ha már "kijavitva" - SIKERTELENNEK KELL LENNIE) - /api/hibak/:id/javitas
 #> VÁRT EREDMÉNY: 409 Conflict - A hiba már ki van javítva
 # Feltételezzük, hogy a {{ujHibaIdTanar}} már "kijavitva"
 PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}/javitas
@@ -264,7 +151,7 @@ Authorization: Bearer {{karbantartoToken}}
 # Hibás kérések tesztelése
 # ==============================================================================
 
-### 2. Bejelentkezés hibás adatokkal
+### 1. Bejelentkezés hibás adatokkal - /api/login
 #> VÁRT EREDMÉNY: 401 Unauthorized - Hibás felhasználónév vagy jelszó
 POST {{baseUrl}}/login
 Content-Type: application/json
@@ -274,11 +161,11 @@ Content-Type: application/json
   "jelszo": "rosszjelszo"
 }
 
-### 3. Végpont elérése token nélkül (Profil endpoint példaként)
+### 2. Végpont elérése token nélkül (Profil endpoint példaként) - /api/profil
 #> VÁRT EREDMÉNY: 401 Unauthorized - Hiányzó vagy érvénytelen token
 GET {{baseUrl}}/profil
 
-### 3. Végpont elérése érvénytelen tokennel (Profil endpoint példaként)
+### 2. Végpont elérése érvénytelen tokennel (Profil endpoint példaként) - /api/profil
 #> VÁRT EREDMÉNY: 403 Forbidden - Érvénytelen token vagy lejárt munkamenet
 GET {{baseUrl}}/profil
 Authorization: Bearer ervenytelentoken123

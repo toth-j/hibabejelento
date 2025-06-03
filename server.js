@@ -89,42 +89,7 @@ function authenticateToken(req, res, next) {
 
 // --- VÉGPONTOK ---
 
-// 1. POST /api/register - Felhasználó regisztrálása (admin által)
-app.post('/api/register', authenticateToken, async (req, res) => {
-  const { nev, felhasznalonev, jelszo, szerep } = req.body;
-  if (req.user.szerep !== 'admin') {
-    return res.status(403).json({ error: 'Nincs jogosultsága ehhez a művelethez.' });
-  }
-  if (!nev || !felhasznalonev || !jelszo || !szerep) {
-    return res.status(400).json({ error: 'Minden mező kitöltése kötelező.' });
-  }
-  if (!['tanar', 'karbantarto', 'admin'].includes(szerep)) {
-    return res.status(400).json({ error: 'Érvénytelen szerepkör.' });
-  }
-  try {
-    const existingUser = dbGet('SELECT * FROM felhasznalok WHERE felhasznalonev = ?', [felhasznalonev]);
-    if (existingUser) {
-      return res.status(409).json({ error: 'A megadott felhasználónév már létezik.' });
-    }
-
-    const hashedPassword = await bcrypt.hash(jelszo, 10);
-    const result = dbRun(
-      'INSERT INTO felhasznalok (nev, felhasznalonev, jelszo, szerep) VALUES (?, ?, ?, ?)',
-      [nev, felhasznalonev, hashedPassword, szerep]
-    );
-    res.status(201).json({
-      id: result.lastInsertRowid,
-      nev,
-      felhasznalonev,
-      szerep,
-    });
-  } catch (error) {
-    console.error("Regisztrációs hiba:", error);
-    res.status(500).json({ error: 'Szerverhiba történt a regisztráció során.' });
-  }
-});
-
-// 2. POST /api/login - Bejelentkezés, JWT token generálása
+// 1. POST /api/login - Bejelentkezés, JWT token generálása
 app.post('/api/login', async (req, res) => {
   const { felhasznalonev, jelszo } = req.body;
   if (!felhasznalonev || !jelszo) {
@@ -152,7 +117,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// 3. GET /api/profil - Saját felhasználói adatok lekérdezése
+// 2. GET /api/profil - Saját felhasználói adatok lekérdezése
 app.get('/api/profil', authenticateToken, async (req, res) => {
   try {
     const userProfile = dbGet('SELECT id, nev, felhasznalonev, szerep FROM felhasznalok WHERE id = ?', [req.user.id]);
@@ -166,7 +131,7 @@ app.get('/api/profil', authenticateToken, async (req, res) => {
   }
 });
 
-// 4. GET /api/hibak - Hibák listázása
+// 3. GET /api/hibak - Hibák listázása
 app.get('/api/hibak', authenticateToken, async (req, res) => {
   const { allapot } = req.query;
   let sql = 'SELECT * FROM hibak';
@@ -190,22 +155,7 @@ app.get('/api/hibak', authenticateToken, async (req, res) => {
   }
 });
 
-// 5. GET /api/hibak/:id - Egyedi hiba adatainak lekérdezése
-app.get('/api/hibak/:id', authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  try {
-    const hiba = dbGet('SELECT * FROM hibak WHERE id = ?', [id]);
-    if (!hiba) {
-      return res.status(404).json({ error: 'A megadott ID-val nem létezik hiba.' });
-    }
-    res.json(hiba);
-  } catch (error) {
-    console.error("Egyedi hiba lekérdezési hiba:", error);
-    res.status(500).json({ error: 'Szerverhiba történt a hiba lekérdezése során.' });
-  }
-});
-
-// 6. POST /api/hibak - Új hiba bejelentése (csak tanároknak és adminnak)
+// 4. POST /api/hibak - Új hiba bejelentése (csak tanároknak és adminnak)
 app.post('/api/hibak', authenticateToken, async (req, res) => {
   const { terem, leiras } = req.body;
   const currentUser = req.user;
@@ -233,7 +183,7 @@ app.post('/api/hibak', authenticateToken, async (req, res) => {
   }
 });
 
-// 9. GET /api/felhasznalok - Felhasználók listázása (csak admin)
+// 5. GET /api/felhasznalok - Felhasználók listázása (minden hitelesített felhasználónak, de a kliens oldalon csak admin használja fel a teljes listát)
 app.get('/api/felhasznalok', authenticateToken, async (req, res) => {
   const currentUser = req.user;
 
@@ -247,79 +197,7 @@ app.get('/api/felhasznalok', authenticateToken, async (req, res) => {
   }
 });
 
-// 10. DELETE /api/felhasznalok/:id - Felhasználó törlése (csak admin)
-app.delete('/api/felhasznalok/:id', authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  const currentUser = req.user;
-
-  if (currentUser.szerep !== 'admin') {
-    return res.status(403).json({ error: 'Nincs jogosultsága ehhez a művelethez.' });
-  }
-
-  // Admin nem törölheti saját magát
-  if (parseInt(id, 10) === currentUser.id) {
-      return res.status(400).json({ error: 'Nem törölheti saját felhasználói fiókját.' });
-  }
-
-  try {
-    const user = dbGet('SELECT id FROM felhasznalok WHERE id = ?', [id]);
-    if (!user) {
-      return res.status(404).json({ error: 'A megadott ID-val nem létezik felhasználó.' });
-    }
-
-    const result = dbRun('DELETE FROM felhasznalok WHERE id = ?', [id]);
-
-    if (result.changes > 0) {
-      res.json({ message: 'Felhasználó sikeresen törölve.' });
-    } else {
-      // Ez elvileg nem fordulhat elő a fenti ellenőrzés után, de jó védelem
-      res.status(404).json({ error: 'A megadott ID-val nem létezik felhasználó.' });
-    }
-  } catch (error) {
-    console.error("Felhasználó törlési hiba:", error);
-    // SQLite FOREIGN KEY constraint hiba kezelése
-    if (error.code === 'SQLITE_CONSTRAINT_FOREIGNKEY') {
-        return res.status(409).json({ error: 'A felhasználó nem törölhető, mert hozzárendelt hibák vannak.' });
-    }
-    res.status(500).json({ error: 'Szerverhiba történt a felhasználó törlése során.' });
-  }
-});
-
-// 7. PUT /api/hibak/:id - Hiba adatainak szerkesztése (bejelentő/admin, ha „bejelentve”)
-app.put('/api/hibak/:id', authenticateToken, async (req, res) => {
-  const { id } = req.params;
-  const { terem, leiras } = req.body;
-  const currentUser = req.user;
-
-  if (!terem || !leiras) {
-    return res.status(400).json({ error: 'A terem és a leírás megadása kötelező a módosításhoz.' });
-  }
-  try {
-    const hiba = dbGet('SELECT * FROM hibak WHERE id = ?', [id]);
-    if (!hiba) {
-      return res.status(404).json({ error: 'A megadott ID-val nem létezik hiba.' });
-    }
-    if (hiba.allapot === 'kijavítva') {
-      return res.status(400).json({ error: 'Kijavított hiba nem szerkeszthető.' });
-    }
-    // Jogosultság ellenőrzés: csak a bejelentő vagy admin módosíthat
-    if (currentUser.szerep !== 'admin' && hiba.bejelento_id !== currentUser.id) {
-      return res.status(403).json({ error: 'Nincs jogosultsága ennek a hibának a szerkesztéséhez.' });
-    }
-    dbRun(
-      'UPDATE hibak SET terem = ?, leiras = ? WHERE id = ?',
-      [terem, leiras, id]
-    );
-    const frissitettHiba = dbGet('SELECT * FROM hibak WHERE id = ?', [id]);
-    res.json(frissitettHiba);
-
-  } catch (error) {
-    console.error("Hiba szerkesztési hiba:", error);
-    res.status(500).json({ error: 'Szerverhiba történt a hiba szerkesztése során.' });
-  }
-});
-
-// 8. PUT /api/hibak/:id/javitas - Hiba kijavítottra állítása (karbantartó/admin)
+// 6. PUT /api/hibak/:id/javitas - Hiba kijavítottra állítása (karbantartó/admin)
 app.put('/api/hibak/:id/javitas', authenticateToken, async (req, res) => {
   const { id } = req.params;
   const currentUser = req.user;

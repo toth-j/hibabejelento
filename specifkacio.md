@@ -1,26 +1,24 @@
-### **Hibabejelentő webes alkalmazás specifikációja**
+## **Hibabejelentő webes alkalmazás specifikációja**
 
-#### **1. Az alkalmazás célja**
+### **1. Az alkalmazás célja**
 
-A portán lévő füzetet kiváltó digitális hibabejelentő és -nyilvántartó rendszer készítése. A felhasználók bejelenthetik a hibákat, a karbantartók pedig jelezhetik a hibák javítását benne. A rendszer webes felületű, számítógépről és mobilról egyaránt elérhető.
+Az iskola portáján lévő füzetet kiváltó digitális hibabejelentő és -nyilvántartó rendszer készítése. A felhasználók bejelenthetik a hibákat, a karbantartók pedig jelezhetik a hibák javítását benne. A rendszer webes felületű, számítógépről és mobilról egyaránt elérhető.
 
 * * *
 
-#### **2. Funkciók**
+### **2. Funkciók**
 
-##### **2.1. Felhasználók**
+#### **2.1. Felhasználók**
 
 * **Tanár**: Hibát jelenthet be.
-
 * **Karbantartó**: Megtekintheti a hibabejelentéseket, és jelezheti a hibák javítását.
+* **Adminisztrátor**: Hibát jelenthet be, megtekintheti a hibabejelentéseket, és jelezheti a hibák javítását. A felhasználók létrehozása, módosítása vagy törlése jelenleg nem része az API funkcionalitásának (az adatbázisba manuálisan vagy SQL szkripttel kerülnek feltöltésre).
 
-* **Adminisztrátor**: Felhasználók kezelése (pl. tanárok, karbantartók regisztrációja).
-
-##### **2.2. Hibabejelentés**
+#### **2.2. Hibabejelentés**
 
 * Új hiba rögzítése:
   
-  * Dátum (automatikusan a rögzítés dátuma, de szerkeszthető, ha szükséges).
+  * Dátum (automatikusan a rögzítés dátuma).
   
   * Tanár neve (bejelentkezett felhasználóból automatikusan kitöltődik).
   
@@ -28,69 +26,63 @@ A portán lévő füzetet kiváltó digitális hibabejelentő és -nyilvántart�
   
   * Hiba rövid leírása (szöveges mező).
 
-##### **2.3. Hibák listázása**
+#### **2.3. Hibák listázása**
 
 * **Mindenki** láthatja:
   
   * Hibák listáját dátum szerint rendezve (elöl a frissebb hibák).
   
-  * Minden hiba adatait: dátum, tanár neve, terem, leírás, javítás állapota (pl. „Javításra vár” vagy „Kijavítva”), karbantartó neve, javítás dátuma.
+  * Minden hiba adatait: dátum, tanár neve, terem, leírás, bejelentő neve, javítás állapota („Bejelentve” vagy „Kijavítva”), karbantartó neve, javítás dátuma.
 
 * **Szűrők**:
   
-  * Javítási állapot szerint (pl. csak a még nyitott hibák).
-  
-  * Terem szerint.
-  
-  * Dátum intervallum szerint.
+  * Javítási állapot szerint (`bejelentve`, `kijavítva`).
 
-##### **2.4. Hiba javításának kezelése (karbantartók számára)**
+#### **2.4. Hiba javításának kezelése (karbantartók és adminisztrátorok számára)**
 
-* A karbantartó kiválaszthatja a hibát, és „Kijavítva” állapotra állíthatja.
+* A karbantartó vagy adminisztrátor kiválaszthatja a hibát, és „Kijavítva” állapotra állíthatja.
 
 * Ekkor rögzítésre kerül:
   
-  * A karbantartó neve (automatikusan).
+  * A javító neve (automatikusan).
   
   * Javítás dátuma (automatikusan).
 
-##### **2.5. Felhasználó azonosítás / jogosultság**
+#### **2.5. Felhasználó azonosítás és jogosultságkezelés**
 
 * **Bejelentkezés**
   
-  * Tanárok és karbantartók felhasználói fiókkal rendelkeznek.
+  * Tanárok, karbantartók és adminisztrátorok felhasználói fiókkal rendelkeznek.
   
-  * Jogosultságok: tanár csak hibát jelenthet, karbantartó javítást is végezhet.
+  * Jogosultságok:
+    * Tanár: Hibát jelenthet be, listázhatja a hibákat.
+    * Karbantartó: Listázhatja a hibákat, hibát javítottra állíthat.
+    * Adminisztrátor: Hibát jelenthet be, listázhatja a hibákat, hibát javítottra állíthat.
 
 * * *
 
-#### **3. Felhasználói felület (UI)**
+### **3. Felhasználói felület (UI)**
 
-* **Reszponzív**: mobilon és asztali gépen is jól használható.
+* **Reszponzív**: mobilon és asztali gépen is használható. Mobilon ajánlott a landscape (fekvő) nézetben.
 
 * **Bejelentkezés / Regisztráció** oldal
+  * Név és jelszó megadásával be lehet jelentkezni.
 
 * **Főoldal / Dashboard**:
   
-  * Legfrissebb hibák listája.
+  * Hibák listája, legfrissebbek elől.
   
-  * Gomb: „Új hiba bejelentése”.
+  * Gomb: „Új hiba bejelentése” (tanárok és adminisztrátorok számára).
   
-  * Szűrési lehetőségek.
+  * Szűrési lehetőség állapot szerint.
 
-* **Új hiba bejelentése** oldal:
+* **Új hiba bejelentése**:
   
-  * Egyszerű űrlap a szükséges mezőkkel.
-
-* **Hibák részletei**:
-  
-  * Egy hiba adatainak részletes megtekintése, szerkesztése.
-  
-  * Karbantartó számára: „Kijavítva” gomb.
+  * Egyszerű modális ablak a szükséges mezőkkel.
 
 * * *
 
-#### **4. Technikai követelmények**
+### **4. Technikai követelmények**
 
 * **Backend**:
   
@@ -103,8 +95,7 @@ A portán lévő füzetet kiváltó digitális hibabejelentő és -nyilvántart�
   * HTML, CSS, JavaScript.
 
 * **Hitelesítés**:
-  
-  * Egyszerű belépés (felhasználónév/jelszó).
+  * Felhasználónév/jelszó alapú bejelentkezés, JWT (JSON Web Token) alapú munkamenetkezelés.
 
 * **Adatok tárolása**:
   
@@ -114,22 +105,10 @@ A portán lévő füzetet kiváltó digitális hibabejelentő és -nyilvántart�
 
 * * *
 
-#### **5. továbbfejlesztési lehetőségek**
+### **5. Továbbfejlesztési lehetőségek**
 
 * **E-mail értesítés** a karbantartóknak új hibabejelentés esetén.
 
 * **Kép feltöltése** a hibához (pl. fotó a törött székről).
 
 * * *
-
-#### **6. Követelmények a vizsgaremek szintjén**
-
-* Az alapfunkciók (hiba bejelentés, lista, javítás állapot kezelése) megvalósítása kötelező.
-
-* A UI legyen egyszerű, de átlátható és reszponzív.
-
-* Dokumentáció: rövid technikai leírás a projekt szerkezetéről (pl. adatbázis struktúra, főbb API végpontok).
-
-* Verziókövetés: javasolt Git (pl. GitHub repo).
-
-
