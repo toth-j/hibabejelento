@@ -22,6 +22,8 @@
 | GET `/api/hibak`             | Hibák listázása                                                |
 | GET `/api/hibak/:id`         | Egyedi hiba adatainak lekérdezése                              |
 | POST `/api/hibak`            | Új hiba bejelentése (csak tanároknak)                          |
+| GET `/api/felhasznalok`      | Felhasználók listázása (csak admin)                            |
+| DELETE `/api/felhasznalok/:id`| Felhasználó törlése (csak admin)                               |
 | PUT `/api/hibak/:id`         | Hiba adatainak szerkesztése (bejelentő/admin, ha „bejelentve”) |
 | PUT `/api/hibak/:id/javitas` | Hiba kijavítottra állítása (karbantartó/admin)                 |
 
@@ -193,6 +195,53 @@ Egyedi hibabejelentés adatainak lekérdezése.
 
 * * *
 
+9️⃣ GET `/api/felhasznalok`
+-----------------------------
+
+### Leírás
+
+Az összes felhasználó listázása (csak admin).
+
+### Válasz
+
+* **200 OK** – felhasználók listája JSON.
+
+    ```json
+    [
+      {
+        "id": 1,
+        "nev": "Adminisztrátor",
+        "felhasznalonev": "admin",
+        "szerep": "admin"
+      },
+      {
+        "id": 2,
+        "nev": "Kiss Péter",
+        "felhasznalonev": "kissp",
+        "szerep": "tanar"
+      },
+      ...
+    ]
+    ```
+
+* **403 Forbidden** – ha nem admin próbálja lekérdezni.
+
+* * *
+
+🔟 DELETE `/api/felhasznalok/:id`
+-----------------------------------
+
+### Leírás
+
+Felhasználó törlése a megadott ID alapján (csak admin).
+
+### Válasz
+
+* **200 OK** – sikeres törlés üzenettel.
+  ```json
+  { "message": "Felhasználó sikeresen törölve." }
+  ```
+
 6️⃣ PUT `/api/hibak/:id`
 ---------------------------
 
@@ -271,6 +320,8 @@ A hiba „kijavítva” állapotra állítása (csak karbantartó vagy admin).
 | GET `/api/hibak`             | ✅                | ✅           | ✅     |
 | GET `/api/hibak/:id`         | ✅                | ✅           | ✅     |
 | POST `/api/hibak`            | ✅                | ❌           | ✅     |
+| GET `/api/felhasznalok`      | ❌                | ❌           | ✅     |
+| DELETE `/api/felhasznalok/:id`| ❌                | ❌           | ✅     |
 | PUT `/api/hibak/:id`         | ✅ (ha bejelentő) | ❌           | ✅     |
 | PUT `/api/hibak/:id/javitas` | ❌                | ✅           | ✅     |
 

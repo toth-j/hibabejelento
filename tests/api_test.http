@@ -85,6 +85,30 @@ Authorization: Bearer {{adminToken}}
 GET {{baseUrl}}/profil
 Authorization: Bearer {{tanarToken}}
 
+### 9. Felhasználók listázása (Admin által)
+#> VÁRT EREDMÉNY: 200 OK - Felhasználók listája sikeresen lekérdezve
+GET {{baseUrl}}/felhasznalok
+Authorization: Bearer {{adminToken}}
+
+### 9. Felhasználók listázása (Tanár által - SIKERTELEN)
+#> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez.
+GET {{baseUrl}}/felhasznalok
+Authorization: Bearer {{tanarToken}}
+
+### 10. Felhasználó törlése (Admin által - Teszt Elek törlése)
+#> VÁRT EREDMÉNY: 200 OK - Felhasználó sikeresen törölve.
+# Feltételezzük, hogy a "tesztelek" felhasználó ID-je 4 (vagy a regisztráció utáni ID)
+# Ezt a tesztet futtatás előtt manuálisan ellenőrizni kell, vagy dinamikusan kinyerni az ID-t a registerUser válaszából, ha a teszt futtató környezet támogatja.
+# Jelenleg feltételezzük, hogy a "tesztelek" ID-je 4.
+DELETE {{baseUrl}}/felhasznalok/4
+Authorization: Bearer {{adminToken}}
+
+### 10. Felhasználó törlése (Tanár által - SIKERTELEN)
+#> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez.
+# Feltételezzük, hogy a "tesztelek" felhasználó ID-je 4.
+DELETE {{baseUrl}}/felhasznalok/4
+Authorization: Bearer {{tanarToken}}
+
 ###
 # ==============================================================================
 # Hibakezelés

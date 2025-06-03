@@ -233,6 +233,58 @@ app.post('/api/hibak', authenticateToken, async (req, res) => {
   }
 });
 
+// 9. GET /api/felhasznalok - Felhasználók listázása (csak admin)
+app.get('/api/felhasznalok', authenticateToken, async (req, res) => {
+  const currentUser = req.user;
+
+  try {
+    // NE küldjük vissza a jelszó hash-t!
+    const users = dbAll('SELECT id, nev, felhasznalonev, szerep FROM felhasznalok');
+    res.json(users);
+  } catch (error) {
+    console.error("Felhasználók listázási hiba:", error);
+    res.status(500).json({ error: 'Szerverhiba történt a felhasználók listázása során.' });
+  }
+});
+
+// 10. DELETE /api/felhasznalok/:id - Felhasználó törlése (csak admin)
+app.delete('/api/felhasznalok/:id', authenticateToken, async (req, res) => {
+  const { id } = req.params;
+  const currentUser = req.user;
+
+  if (currentUser.szerep !== 'admin') {
+    return res.status(403).json({ error: 'Nincs jogosultsága ehhez a művelethez.' });
+  }
+
+  // Admin nem törölheti saját magát
+  if (parseInt(id, 10) === currentUser.id) {
+      return res.status(400).json({ error: 'Nem törölheti saját felhasználói fiókját.' });
+  }
+
+  try {
+    const user = dbGet('SELECT id FROM felhasznalok WHERE id = ?', [id]);
+    if (!user) {
+      return res.status(404).json({ error: 'A megadott ID-val nem létezik felhasználó.' });
+    }
+
+    const result = dbRun('DELETE FROM felhasznalok WHERE id = ?', [id]);
+
+    if (result.changes > 0) {
+      res.json({ message: 'Felhasználó sikeresen törölve.' });
+    } else {
+      // Ez elvileg nem fordulhat elő a fenti ellenőrzés után, de jó védelem
+      res.status(404).json({ error: 'A megadott ID-val nem létezik felhasználó.' });
+    }
+  } catch (error) {
+    console.error("Felhasználó törlési hiba:", error);
+    // SQLite FOREIGN KEY constraint hiba kezelése
+    if (error.code === 'SQLITE_CONSTRAINT_FOREIGNKEY') {
+        return res.status(409).json({ error: 'A felhasználó nem törölhető, mert hozzárendelt hibák vannak.' });
+    }
+    res.status(500).json({ error: 'Szerverhiba történt a felhasználó törlése során.' });
+  }
+});
+
 // 7. PUT /api/hibak/:id - Hiba adatainak szerkesztése (bejelentő/admin, ha „bejelentve”)
 app.put('/api/hibak/:id', authenticateToken, async (req, res) => {
   const { id } = req.params;

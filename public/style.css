@@ -7,4 +7,12 @@ body {
     color: rgba(255, 255, 255, 0.75) !important; /* Bootstrap felülírása, ha szükséges */
 }
 
-/* További egyedi stílusok itt */
+/* Kisebb margók mobil fekvő nézetben */
+@media (max-width: 767.98px) and (orientation: landscape) {
+  .container {
+    max-width: 100%; /* A konténer kitöltheti a teljes szélességet */
+    padding-left: 15px;  /* Csökkentett bal oldali belső margó (gutter) */
+    padding-right: 15px; /* Csökkentett jobb oldali belső margó (gutter) */
+  }
+}
+

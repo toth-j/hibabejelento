@@ -1,7 +1,9 @@
 // script.js
 const API_BASE_URL = 'http://localhost:3000/api'; // Backend API címe
+let currentUserProfile = null; // Globális változó a felhasználói profil tárolására
+let allUsersMap = new Map(); // Globális Map a felhasználói ID-k és nevek tárolására
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => { // Async a loadUserProfile await miatt
     const token = sessionStorage.getItem('authToken');
     const currentPage = window.location.pathname.split("/").pop() || 'index.html'; // Alapértelmezett az index.html, ha üres az elérési út
 
@@ -19,8 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.href = 'index.html'; // Ha nincs token, irányítsd át a login oldalra
             return; // Kilépés a DOMContentLoaded callbackből
         }
-        loadUserProfile();
-        loadFaults();
+        await loadUserProfile(); // Megvárjuk az aktuális felhasználó profiljának betöltését
+        if (currentUserProfile) { // Csak akkor töltjük be a hibákat, ha a profil sikeresen betöltődött
+            await fetchAllUsers(); // Lekérdezzük az összes felhasználót a nevek megjelenítéséhez
+            loadFaults();
+        } else {
+            console.log("Aktuális felhasználói profil nem töltődött be, hibák és egyéb adatok betöltése megszakítva.");
+        }
 
         const logoutButton = document.getElementById('logoutButton');
         if (logoutButton) logoutButton.addEventListener('click', handleLogout);
@@ -33,11 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const filterStatus = document.getElementById('filterStatus');
         if (filterStatus) filterStatus.addEventListener('change', () => loadFaults(filterStatus.value));
 
-        const editFaultForm = document.getElementById('editFaultForm');
-        if (editFaultForm) editFaultForm.addEventListener('submit', handleEditFaultSubmit);
-
-        const markAsFixedButton = document.getElementById('markAsFixedButton');
-        if (markAsFixedButton) markAsFixedButton.addEventListener('click', handleMarkAsFixed);
+        // Az editFaultForm és a modal-beli markAsFixedButton eseménykezelői eltávolítva, mivel a modal megszűnt.
+        // A "Kijavítva" gombok eseménykezelése a renderFaults függvényben történik.
     }
 });
 
@@ -72,8 +76,6 @@ function handleLogout() {
     window.location.href = 'index.html';
 }
 
-let currentUserProfile = null;
-
 async function loadUserProfile() {
     const token = sessionStorage.getItem('authToken');
     if (!token) return;
@@ -101,6 +103,29 @@ async function loadUserProfile() {
         console.error('Hiba a profiladatok lekérdezésekor:', error);
     }
 }
+
+async function fetchAllUsers() {
+    const token = sessionStorage.getItem('authToken');
+    if (!token) return;
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/felhasznalok`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (response.ok) {
+            const users = await response.json();
+            users.forEach(user => {
+                allUsersMap.set(user.id, user.felhasznalonev); // Felhasználónév tárolása ID alapján
+            });
+        } else {
+            console.error('Felhasználók lekérdezése sikertelen.');
+            if (response.status === 401 || response.status === 403) handleLogout();
+        }
+    } catch (error) {
+        console.error('Hiba a felhasználók lekérdezésekor:', error);
+    }
+}
+
 
 async function loadFaults(statusFilter = '') {
     const token = sessionStorage.getItem('authToken');
@@ -143,16 +168,24 @@ function renderFaults(faults) {
         row.insertCell().textContent = fault.terem;
         row.insertCell().textContent = fault.leiras;
         row.insertCell().innerHTML = `<span class="badge bg-${fault.allapot === 'bejelentve' ? 'warning' : 'success'}">${fault.allapot}</span>`;
-        row.insertCell().textContent = fault.bejelento_id;
-        row.insertCell().textContent = fault.javito_id || '-';
+        row.insertCell().textContent = allUsersMap.get(fault.bejelento_id) || fault.bejelento_id; // Bejelentő neve vagy ID
+        row.insertCell().textContent = fault.javito_id ? (allUsersMap.get(fault.javito_id) || fault.javito_id) : '-'; // Javító neve vagy ID, ha van
         row.insertCell().textContent = fault.javitas_datuma || '-';
 
         const actionsCell = row.insertCell();
         const viewButton = document.createElement('button');
-        viewButton.classList.add('btn', 'btn-sm', 'btn-info');
-        viewButton.textContent = 'Részletek';
-        viewButton.onclick = () => openFaultDetailModal(fault.id);
-        actionsCell.appendChild(viewButton);
+
+        // "Kijavítva" gomb hozzáadása, ha releváns
+        if (fault.allapot === 'bejelentve' && currentUserProfile &&
+            (currentUserProfile.szerep === 'admin' || currentUserProfile.szerep === 'karbantarto')) {
+            const markFixedButton = document.createElement('button');
+            markFixedButton.classList.add('btn', 'btn-sm', 'btn-secondary');
+            markFixedButton.textContent = 'Kijavítva';
+            markFixedButton.onclick = () => handleMarkAsFixed(fault.id); // Közvetlen hívás fault.id-val
+            actionsCell.appendChild(markFixedButton);
+        } else {
+            actionsCell.textContent = '-'; // Ha nincs művelet
+        }
     });
 }
 
@@ -187,106 +220,16 @@ async function handleNewFaultSubmit(event) {
     }
 }
 
-async function openFaultDetailModal(faultId) {
+// Az openFaultDetailModal függvény eltávolítva, mivel a részletes nézet modal megszűnt.
+
+// A handleEditFaultSubmit függvény eltávolítva, mivel a szerkesztési funkció megszűnt.
+
+async function handleMarkAsFixed(faultId) { // faultId paraméterként érkezik
     const token = sessionStorage.getItem('authToken');
-    if (!token || !currentUserProfile) return;
+    // const faultId = this.dataset.faultId; // Eltávolítva, faultId paraméterből jön
 
-    try {
-        const response = await fetch(`${API_BASE_URL}/hibak/${faultId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (!response.ok) {
-            alert('Hiba a részletek lekérdezésekor.');
-            return;
-        }
-        const fault = await response.json();
-
-        document.getElementById('editFaultId').value = fault.id;
-        document.getElementById('editTerem').value = fault.terem;
-        document.getElementById('editLeiras').value = fault.leiras;
-        document.getElementById('detailAllapot').textContent = fault.allapot;
-        document.getElementById('detailBejelentoDatum').textContent = fault.datum;
-        document.getElementById('detailBejelentoId').textContent = fault.bejelento_id;
-
-        const javitasInfoContainer = document.getElementById('javitasInfoContainer');
-        if (fault.allapot === 'kijavítva' && fault.javito_id) {
-            document.getElementById('detailJavitoId').textContent = fault.javito_id;
-            document.getElementById('detailJavitasDatum').textContent = fault.javitas_datuma;
-            javitasInfoContainer.style.display = 'block';
-        } else {
-            javitasInfoContainer.style.display = 'none';
-        }
-
-        const saveButton = document.getElementById('saveFaultChangesButton');
-        const fixButton = document.getElementById('markAsFixedButton');
-        const editTeremInput = document.getElementById('editTerem');
-        const editLeirasInput = document.getElementById('editLeiras');
-
-        // Szerkesztés engedélyezése
-        if (fault.allapot === 'bejelentve' && (currentUserProfile.szerep === 'admin' || currentUserProfile.id === fault.bejelento_id)) {
-            saveButton.disabled = false;
-            editTeremInput.readOnly = false;
-            editLeirasInput.readOnly = false;
-        } else {
-            saveButton.disabled = true;
-            editTeremInput.readOnly = true;
-            editLeirasInput.readOnly = true;
-        }
-
-        // Kijavítottra állítás engedélyezése
-        if (fault.allapot === 'bejelentve' && (currentUserProfile.szerep === 'admin' || currentUserProfile.szerep === 'karbantarto')) {
-            fixButton.disabled = false;
-        } else {
-            fixButton.disabled = true;
-        }
-        fixButton.dataset.faultId = fault.id; // Hozzáadjuk az ID-t a gombhoz
-
-        const detailModal = new bootstrap.Modal(document.getElementById('faultDetailModal'));
-        detailModal.show();
-
-    } catch (error) {
-        console.error('Hiba a hiba részleteinek lekérdezésekor:', error);
-        alert('Hiba történt a részletek betöltésekor.');
-    }
-}
-
-
-async function handleEditFaultSubmit(event) {
-    event.preventDefault();
-    const token = sessionStorage.getItem('authToken');
-    const faultId = document.getElementById('editFaultId').value;
-    const terem = document.getElementById('editTerem').value;
-    const leiras = document.getElementById('editLeiras').value;
-    const editFaultErrorDiv = document.getElementById('editFaultError');
-    editFaultErrorDiv.textContent = '';
-
-    try {
-        const response = await fetch(`${API_BASE_URL}/hibak/${faultId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ terem, leiras })
-        });
-        const data = await response.json();
-        if (response.ok) {
-            bootstrap.Modal.getInstance(document.getElementById('faultDetailModal')).hide();
-            loadFaults(document.getElementById('filterStatus').value);
-        } else {
-            editFaultErrorDiv.textContent = data.error || 'Hiba történt a mentés során.';
-        }
-    } catch (error) {
-        console.error('Hiba szerkesztési hiba:', error);
-        editFaultErrorDiv.textContent = 'Hálózati hiba történt.';
-    }
-}
-
-async function handleMarkAsFixed() {
-    const token = sessionStorage.getItem('authToken');
-    const faultId = this.dataset.faultId; // 'this' a gombra mutat, amire kattintottak
     if (!faultId) {
-        console.error("Nincs faultId a 'Kijavítottra állítás' gombon.");
+        console.error("Nincs faultId a 'Kijavítottra állítás' művelethez.");
         return;
     }
 
@@ -305,8 +248,8 @@ async function handleMarkAsFixed() {
         });
         const data = await response.json();
         if (response.ok) {
-            bootstrap.Modal.getInstance(document.getElementById('faultDetailModal')).hide();
-            loadFaults(document.getElementById('filterStatus').value);
+            // A modal bezárása itt már nem szükséges, mivel nincs modal.
+            loadFaults(document.getElementById('filterStatus').value); // Frissítjük a listát
         } else {
             alert(data.error || 'Hiba történt a kijavítottra állítás során.');
         }
