@@ -1,0 +1,10 @@
+/* style.css */
+body {
+    font-family: sans-serif;
+}
+
+.navbar-text {
+    color: rgba(255, 255, 255, 0.75) !important; /* Bootstrap felülírása, ha szükséges */
+}
+
+/* További egyedi stílusok itt */

@@ -1,0 +1,260 @@
+@baseUrl = http://localhost:3000/api
+
+###
+# ==============================================================================
+# Felhasználókezelés
+# ==============================================================================
+
+### 2. Admin bejelentkezése (token kinyerése)
+#> VÁRT EREDMÉNY: 200 OK - Sikeres bejelentkezés, token visszaküldve
+# @name loginAdmin
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "felhasznalonev": "admin",
+  "jelszo": "Minad123"
+}
+
+### Token mentése változóba
+@adminToken = {{loginAdmin.response.body.token}}
+
+### 2. Tanár bejelentkezése (token kinyerése)
+#> VÁRT EREDMÉNY: 200 OK - Sikeres bejelentkezés, token visszaküldve
+# @name loginTanar
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "felhasznalonev": "kissp",
+  "jelszo": "kissp"
+}
+
+### Token mentése változóba
+@tanarToken = {{loginTanar.response.body.token}}
+
+### 2. Karbantartó bejelentkezése (token kinyerése)
+#> VÁRT EREDMÉNY: 200 OK - Sikeres bejelentkezés, token visszaküldve
+# @name loginKarbantarto
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "felhasznalonev": "szabob",
+  "jelszo": "szabob"
+}
+
+### Token mentése változóba
+@karbantartoToken = {{loginKarbantarto.response.body.token}}
+
+### 1. Új felhasználó regisztrálása (Admin által)
+#> VÁRT EREDMÉNY: 201 Created - Felhasználó sikeresen regisztrálva 
+#(vagy 409 Conflict, ha a felhasználónév már létezik)
+# @name registerUser
+POST {{baseUrl}}/register
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nev": "Teszt Elek",
+  "felhasznalonev": "tesztelek",
+  "jelszo": "tesztjelszo",
+  "szerep": "tanar"
+}
+
+### 1. Új felhasználó regisztrálása (Tanár által - SIKERTELEN)
+#> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez.
+POST {{baseUrl}}/register
+Authorization: Bearer {{tanarToken}}
+Content-Type: application/json
+
+{
+  "nev": "Jogtalan Teszt",
+  "felhasznalonev": "jogtalanteszt",
+  "jelszo": "tesztjelszo",
+  "szerep": "karbantarto"
+}
+
+### 3. Profiladatok lekérdezése (Admin)
+#> VÁRT EREDMÉNY: 200 OK - Admin profiladatok sikeresen lekérdezve
+GET {{baseUrl}}/profil
+Authorization: Bearer {{adminToken}}
+
+### 3. Profiladatok lekérdezése (Tanár)
+#> VÁRT EREDMÉNY: 200 OK - Tanár profiladatok sikeresen lekérdezve
+GET {{baseUrl}}/profil
+Authorization: Bearer {{tanarToken}}
+
+###
+# ==============================================================================
+# Hibakezelés
+# ==============================================================================
+
+### 4. Összes hiba listázása (Tanárként)
+#> VÁRT EREDMÉNY: 200 OK - Hibák listája sikeresen lekérdezve
+GET {{baseUrl}}/hibak
+Authorization: Bearer {{tanarToken}}
+
+### 4. Csak "bejelentve" állapotú hibák listázása
+#> VÁRT EREDMÉNY: 200 OK - "Bejelentve" állapotú hibák listája sikeresen lekérdezve
+GET {{baseUrl}}/hibak?allapot=bejelentve
+Authorization: Bearer {{tanarToken}}
+
+### 4. Csak "kijavitva" állapotú hibák listázása
+#> VÁRT EREDMÉNY: 200 OK - "Kijavítva" állapotú hibák listája sikeresen lekérdezve
+GET {{baseUrl}}/hibak?allapot=kijavítva
+Authorization: Bearer {{tanarToken}}
+
+### 5. Egyedi hiba adatainak lekérdezése (ID: 1)
+#> VÁRT EREDMÉNY: 200 OK - Hiba adatai sikeresen lekérdezve (ha létezik az ID) vagy 404 Not Found
+GET {{baseUrl}}/hibak/1
+Authorization: Bearer {{tanarToken}}
+
+### 5. Egyedi hiba adatainak lekérdezése (Nem létező ID: 999)
+#> VÁRT EREDMÉNY: 404 Not Found - A megadott ID-val nem létezik hiba
+GET {{baseUrl}}/hibak/999
+Authorization: Bearer {{tanarToken}}
+
+### 6. Új hiba bejelentése (Tanár által)
+#> VÁRT EREDMÉNY: 201 Created - Új hiba sikeresen bejelentve
+# @name ujHibaTanar
+POST {{baseUrl}}/hibak
+Authorization: Bearer {{tanarToken}}
+Content-Type: application/json
+
+{
+  "terem": "303-as labor",
+  "leiras": "Ablak nem záródik rendesen."
+}
+
+### Új hiba ID kinyerése
+@ujHibaIdTanar = {{ujHibaTanar.response.body.id}}
+
+### 6. Új hiba bejelentése (Admin által)
+#> VÁRT EREDMÉNY: 201 Created - Új hiba sikeresen bejelentve
+# @name ujHibaAdmin
+POST {{baseUrl}}/hibak
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "terem": "Tornaterem",
+  "leiras": "Kosárlabda palánk meglazult."
+}
+
+### Új hiba ID kinyerése
+@ujHibaIdAdmin = {{ujHibaAdmin.response.body.id}}
+
+### 6. Hiba bejelentése (Karbantartó által - SIKERTELENNEK KELL LENNIE)
+#> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez
+POST {{baseUrl}}/hibak
+Authorization: Bearer {{karbantartoToken}}
+Content-Type: application/json
+
+{
+  "terem": "Karbantartó műhely",
+  "leiras": "Elfogyott a csavar."
+}
+
+### 7. Hiba szerkesztése (Bejelentő tanár által, ha "bejelentve")
+# Feltételezzük, hogy a {{ujHibaIdTanar}} létezik és "bejelentve" állapotú
+#> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen szerkesztve 
+# Feltételezzük, hogy a {{ujHibaIdTanar}} létezik és "bejelentve" állapotú
+PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}
+Authorization: Bearer {{tanarToken}}
+Content-Type: application/json
+
+{
+  "terem": "303-as labor (frissítve)",
+  "leiras": "Az ablak nem záródik rendesen, a kilincs is laza."
+}
+
+### 7. Hiba szerkesztése (Admin által, ha "bejelentve")
+#> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen szerkesztve
+# Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
+PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "terem": "Tornaterem (admin frissítés)",
+  "leiras": "Kosárlabda palánk meglazult, javításra szorul."
+}
+
+### 7. Hiba szerkesztése (Admin által, csak TEREM megadásával - SIKERTELEN)
+#> VÁRT EREDMÉNY: 400 Bad Request - A terem és a leírás megadása kötelező a módosításhoz.
+# Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
+PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "terem": "Csak terem frissítés (admin)"
+  // "leiras" szándékosan hiányzik
+}
+
+### 7. Hiba szerkesztése (Admin által, csak LEÍRÁS megadásával - SIKERTELEN)
+#> VÁRT EREDMÉNY: 400 Bad Request - A terem és a leírás megadása kötelező a módosításhoz.
+# Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
+PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "leiras": "Csak leírás frissítés (admin)"
+  // "terem" szándékosan hiányzik
+}
+
+### 8. Hiba kijavítottra állítása (Karbantartó által)
+#> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen kijavítottra állítva
+# Feltételezzük, hogy a {{ujHibaIdTanar}} létezik és "bejelentve" állapotú
+PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}/javitas
+Authorization: Bearer {{karbantartoToken}}
+
+### 8. Hiba kijavítottra állítása (Admin által)
+#> VÁRT EREDMÉNY: 200 OK - Hiba sikeresen kijavítottra állítva 
+# Feltételezzük, hogy a {{ujHibaIdAdmin}} létezik és "bejelentve" állapotú
+PUT {{baseUrl}}/hibak/{{ujHibaIdAdmin}}/javitas
+Authorization: Bearer {{adminToken}}
+
+### 7. Hiba szerkesztése (Miután "kijavitva")
+#> VÁRT EREDMÉNY: 400 Bad Request - Kijavított hiba nem szerkeszthető
+# Feltételezzük, hogy a {{ujHibaIdTanar}} már "kijavitva"
+PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}
+Authorization: Bearer {{tanarToken}}
+Content-Type: application/json
+
+{
+  "terem": "303-as labor (újabb frissítés)",
+  "leiras": "Mégsem jó."
+}
+
+### 8. Hiba kijavítottra állítása (Ha már "kijavitva" - SIKERTELENNEK KELL LENNIE)
+#> VÁRT EREDMÉNY: 409 Conflict - A hiba már ki van javítva
+# Feltételezzük, hogy a {{ujHibaIdTanar}} már "kijavitva"
+PUT {{baseUrl}}/hibak/{{ujHibaIdTanar}}/javitas
+Authorization: Bearer {{karbantartoToken}}
+
+###
+# ==============================================================================
+# Hibás kérések tesztelése
+# ==============================================================================
+
+### 2. Bejelentkezés hibás adatokkal
+#> VÁRT EREDMÉNY: 401 Unauthorized - Hibás felhasználónév vagy jelszó
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "felhasznalonev": "nemletezo",
+  "jelszo": "rosszjelszo"
+}
+
+### 3. Végpont elérése token nélkül (Profil endpoint példaként)
+#> VÁRT EREDMÉNY: 401 Unauthorized - Hiányzó vagy érvénytelen token
+GET {{baseUrl}}/profil
+
+### 3. Végpont elérése érvénytelen tokennel (Profil endpoint példaként)
+#> VÁRT EREDMÉNY: 403 Forbidden - Érvénytelen token vagy lejárt munkamenet
+GET {{baseUrl}}/profil
+Authorization: Bearer ervenytelentoken123
