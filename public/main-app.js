@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 function handleLogout() {
     sessionStorage.removeItem('authToken');
-    window.location.href = 'index.html';
+    window.location.replace('index.html');
 }
 
 async function loadUserProfile() {

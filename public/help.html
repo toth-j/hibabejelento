@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Súgó - Hibabejelentő Rendszer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="main.html">Hibabejelentő</a>
+      <!-- <span class="navbar-text ms-auto me-3">Súgó</span> -->
+      <a href="main.html" class="btn btn-outline-light">Vissza a főoldalra</a>
+    </div>
+  </nav>
+
+  <div class="container mt-4">
+    <h1>Súgó</h1>
+
+    <section class="mt-4">
+      <h2>1. Az alkalmazás célja</h2>
+      <p>A Hibabejelentő alkalmazás célja, hogy kiváltsa az iskola portáján lévő papír alapú hibabejelentő füzetet. Lehetővé teszi a felhasználók számára a hibák digitális bejelentését, a karbantartóknak pedig a javítások nyilvántartását. Az alkalmazás webes felületű, számítógépről és mobilról egyaránt elérhető.</p>
+    </section>
+
+    <section class="mt-4">
+      <h2>2. Felhasználói szerepkörök és jogosultságok</h2>
+      <p>Az alkalmazásban háromféle felhasználói szerepkör létezik, eltérő jogosultságokkal:</p>
+      <ul>
+        <li><strong>Tanár:</strong> Bejelenthet új hibákat, és megtekintheti az összes hibabejelentést.</li>
+        <li><strong>Karbantartó:</strong> Megtekintheti az összes hibabejelentést, és a "Bejelentve" állapotú hibákat "Kijavítva" állapotra állíthatja.</li>
+        <li><strong>Adminisztrátor:</strong> Bejelenthet új hibákat, megtekintheti az összes hibabejelentést, és a "Bejelentve" állapotú hibákat "Kijavítva" állapotra állíthatja.</li>
+      </ul>
+    </section>
+
+    <section class="mt-4">
+      <h2>3. Az alkalmazás használata</h2>
+
+      <h3 class="mt-3">3.1. Bejelentkezés</h3>
+      <p>Az alkalmazás használatához felhasználónévvel és jelszóval kell bejelentkezni az indító oldalon (<code>index.html</code>). Sikeres bejelentkezés után a főoldalra (<code>main.html</code>) kerül átirányításra.</p>
+
+      <h3 class="mt-3">3.2. Hibák megtekintése és szűrése</h3>
+      <p>A főoldalon egy táblázatban láthatók a bejelentett hibák, dátum szerint csökkenő sorrendben (legfrissebb elöl). A táblázat tartalmazza a hiba dátumát, a terem nevét, a leírást, az aktuális állapotot ("Bejelentve" vagy "Kijavítva"), a bejelentő nevét, a javító nevét és a javítás dátumát (ha releváns).</p>
+      <p>A táblázat felett található egy legördülő lista, amellyel szűrheti a hibákat állapot szerint ("Összes", "Bejelentve", "Kijavítva").</p>
+
+      <h3 class="mt-3">3.3. Új hiba bejelentése</h3>
+      <p>Ha Ön <strong>Tanár</strong> vagy <strong>Adminisztrátor</strong>, a főoldalon látható "Új hiba bejelentése" gombra kattintva egy modális ablak jelenik meg. Itt megadhatja a terem nevét és a hiba rövid leírását. A dátum és a bejelentő neve automatikusan kerül rögzítésre.</p>
+
+      <h3 class="mt-3">3.4. Hiba javítottra állítása</h3>
+      <p>Ha Ön <strong>Karbantartó</strong> vagy <strong>Adminisztrátor</strong>, a "Bejelentve" állapotú hibák sorában megjelenik egy "Kijavítva" gomb a "Műveletek" oszlopban. Erre a gombra kattintva a hiba állapota "Kijavítva" lesz, és automatikusan rögzítésre kerül a javító neve és a javítás dátuma.</p>
+
+      <h3 class="mt-3">3.5. Kijelentkezés</h3>
+      <p>A főoldal jobb felső sarkában található "Kijelentkezés" gombra kattintva tud kilépni az alkalmazásból. Ekkor visszakerül a bejelentkezési oldalra.</p>
+    </section>
+
+    <section class="mt-4">
+      <h2>4. Reszponzivitás</h2>
+      <p>Az alkalmazás kialakítása reszponzív, így asztali számítógépen és mobil eszközökön egyaránt kényelmesen használható. Mobilon fekvő (landscape) nézetben ajánlott a használata a táblázat jobb áttekinthetősége érdekében.</p>
+    </section>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
