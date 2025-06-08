@@ -24,8 +24,8 @@ Az adatokat egy adatbázisban kell tárolni, amelyet egy API-n keresztül lehet 
 2. Navigálj a projekt gyökérkönyvtárába.
 
 3. Hozz létre egy `.env` fájlt a gyökérkönyvtárban a következő tartalommal (Cseréld le a `JWT_SECRET` értékét egy titkos kulcsra):
-   
-   ```
+
+   ```env
    JWT_SECRET=generalt_eros_titkos_kulcs_legyen_itt
    DB_PATH=./hibabejelento.db
    PORT=3000
@@ -42,7 +42,7 @@ Az adatokat egy adatbázisban kell tárolni, amelyet egy API-n keresztül lehet 
 ### Indítás
 
 * A szerver indítása: `npm start` vagy `node server.js`
-* Az alkalmazás elérhető lesz a `http://localhost:5000` címen).
+* Az alkalmazás elérhető lesz a `http://localhost:5000` címen.
 
 ## Dokumentáció
 

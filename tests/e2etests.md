@@ -152,9 +152,9 @@
   * **Előfeltételek:** A felhasználó karbantartóként van bejelentkezve. Létezik legalább egy "bejelentve" állapotú hiba a rendszerben.
   * **Lépések:**
     1. Keresd meg a hibák listájában az egyik "bejelentve" állapotú hibát.
-    2. Kattints a hiba sorának "Műveletek" oszlopában található "Kijavítva" gombra.
+    2. Kattints a hiba sorának "Műveletek" oszlopában található "Javítás" gombra.
     3. A megjelenő megerősítő kérdésre kattints az "OK" (vagy "Igen") gombra.
-  * **Várt Eredmény:** A hiba állapota a listában "kijavítva"-ra változik. A "Javító" oszlopban megjelenik a bejelentkezett karbantartó neve, a "Mikor" oszlopban pedig az aktuális dátum. A "Kijavítva" gomb eltűnik az adott sorból.
+  * **Várt Eredmény:** A hiba állapota a listában "kijavítva"-ra változik. A "Javító" oszlopban megjelenik a bejelentkezett karbantartó neve, a "Mikor" oszlopban pedig az aktuális dátum. A "Javítás" gomb eltűnik az adott sorból.
 
 * **Teszteset HJ-02: Hiba kijavítottra állítása adminisztrátorként**
   
@@ -162,9 +162,9 @@
   * **Előfeltételek:** A felhasználó adminisztrátorként van bejelentkezve. Létezik legalább egy "bejelentve" állapotú hiba a rendszerben.
   * **Lépések:**
     1. Keresd meg a hibák listájában az egyik "bejelentve" állapotú hibát.
-    2. Kattints a hiba sorának "Műveletek" oszlopában található "Kijavítva" gombra.
+    2. Kattints a hiba sorának "Műveletek" oszlopában található "Javítás" gombra.
     3. A megjelenő megerősítő kérdésre kattints az "OK" (vagy "Igen") gombra.
-  * **Várt Eredmény:** A hiba állapota a listában "kijavítva"-ra változik. A "Javító" oszlopban megjelenik a bejelentkezett adminisztrátor neve, a "Mikor" oszlopban pedig az aktuális dátum. A "Kijavítva" gomb eltűnik az adott sorból.
+  * **Várt Eredmény:** A hiba állapota a listában "kijavítva"-ra változik. A "Javító" oszlopban megjelenik a bejelentkezett adminisztrátor neve, a "Mikor" oszlopban pedig az aktuális dátum. A "Javítás" gomb eltűnik az adott sorból.
 
 * **Teszteset HJ-03: Hiba kijavítottra állítása tanárként (sikertelen)**
   
@@ -173,7 +173,7 @@
   * **Lépések:**
     1. Keresd meg a hibák listájában az egyik "bejelentve" állapotú hibát.
     2. Figyeld meg a hiba sorának "Műveletek" oszlopát.
-  * **Várt Eredmény:** Nincs "Kijavítva" gomb a tanár számára a "Műveletek" oszlopban.
+  * **Várt Eredmény:** Nincs "Javítás" gomb a tanár számára a "Műveletek" oszlopban.
 
 * **Teszteset HJ-04: Hiba kijavítottra állítása (már kijavított hiba esetén - sikertelen)**
   
@@ -182,7 +182,7 @@
   * **Lépések:**
     1. Keresd meg a hibák listájában az egyik "kijavítva" állapotú hibát.
     2. Figyeld meg a hiba sorának "Műveletek" oszlopát. (Ha a gomb nem látszik, a teszt sikeres. Ha valamilyen okból mégis látszana és kattintható lenne, próbáld meg.)
-  * **Várt Eredmény:** A "Kijavítva" gomb nem látható a már kijavított hibák sorában. Ha API hívással próbálnánk, a szervernek 409 Conflict hibát kellene visszaadnia ("A hiba már ki van javítva.").
+  * **Várt Eredmény:** A "Javítás" gomb nem látható a már kijavított hibák sorában. Ha API hívással próbálnánk, a szervernek 409 Conflict hibát kellene visszaadnia ("A hiba már ki van javítva.").
 
 **Felhasználói felület (UI) tesztelése**
 

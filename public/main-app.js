@@ -137,7 +137,7 @@ function renderFaults(faults) {
             (currentUserProfile.szerep === 'admin' || currentUserProfile.szerep === 'karbantarto')) {
             const markFixedButton = document.createElement('button');
             markFixedButton.classList.add('btn', 'btn-sm', 'btn-secondary');
-            markFixedButton.textContent = 'Kijavítva';
+            markFixedButton.textContent = 'Javítás';
             markFixedButton.onclick = () => handleMarkAsFixed(fault.id);
             actionsCell.appendChild(markFixedButton);
         } else {

@@ -79,7 +79,7 @@ Az alkalmazás a `server.js` által biztosított API végpontokkal kommunikál
       * Kitölti a cellákat a hiba adataival (dátum, terem, leírás, állapot, bejelentő neve, javító neve, javítás dátuma).
       * Az állapotot egy Bootstrap badge segítségével jeleníti meg (`bg-warning` vagy `bg-success`).
       * A bejelentő és javító nevét az `allUsersMap` alapján próbálja megkeresni. Ha nem található, az ID-t jeleníti meg.
-      * Ha a hiba állapota 'bejelentve' és a felhasználó 'admin' vagy 'karbantarto', akkor egy "Kijavítva" gombot ad a "Műveletek" oszlophoz, amely a `handleMarkAsFixed(fault.id)` függvényt hívja meg.
+      * Ha a hiba állapota 'bejelentve' és a felhasználó 'admin' vagy 'karbantarto', akkor egy "Javítás" gombot ad a "Műveletek" oszlophoz, amely a `handleMarkAsFixed(fault.id)` függvényt hívja meg.
   * **`handleNewFaultSubmit(event)`**:
     * Megakadályozza az űrlap alapértelmezett beküldését.
     * Kiolvassa a termet és a leírást az űrlap mezőiből.
