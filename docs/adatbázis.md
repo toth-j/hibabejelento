@@ -102,10 +102,4 @@ Ezekkel a tesztadatokkal lehet tesztelni:
 
 Új tesztadatbázis létrehozásához a parancsok a *tesztadatok.sql* fájlba kerültek. Futtatás:
 
-`sqlite3 hibabejelento.db < tesztadatok.sql `
-
-
-
-### 
-
-
+`sqlite3 hibabejelento.db < tesztadatok.sql`
