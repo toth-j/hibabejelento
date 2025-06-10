@@ -183,7 +183,7 @@ app.post('/api/hibak', authenticateToken, async (req, res) => {
   }
 });
 
-// 5. GET /api/felhasznalok - Felhasználók listázása (minden hitelesített felhasználónak, de a kliens oldalon csak admin használja fel a teljes listát)
+// 5. GET /api/felhasznalok - Felhasználók listázása (minden hitelesített felhasználónak)
 app.get('/api/felhasznalok', authenticateToken, async (req, res) => {
   const currentUser = req.user;
 
@@ -194,6 +194,76 @@ app.get('/api/felhasznalok', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error("Felhasználók listázási hiba:", error);
     res.status(500).json({ error: 'Szerverhiba történt a felhasználók listázása során.' });
+  }
+});
+
+// 5.1 POST /api/felhasznalok - Új felhasználó létrehozása (csak admin)
+app.post('/api/felhasznalok', authenticateToken, async (req, res) => {
+  const currentUser = req.user;
+  // Jogosultság ellenőrzés: csak admin hozhat létre új felhasználót
+  if (currentUser.szerep !== 'admin') {
+    return res.status(403).json({ error: 'Nincs jogosultsága ehhez a művelethez.' });
+  }
+  const { nev, felhasznalonev, jelszo, szerep } = req.body;
+  if (!nev || !felhasznalonev || !jelszo || !szerep) {
+    return res.status(400).json({ error: 'Minden mező (név, felhasználónév, jelszó, szerep) kitöltése kötelező.' });
+  }
+  const validRoles = ['admin', 'tanar', 'karbantarto'];
+  if (!validRoles.includes(szerep)) {
+    return res.status(400).json({ error: `Érvénytelen szerepkör. Lehetséges értékek: ${validRoles.join(', ')}.` });
+  }
+
+  try {
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(jelszo, saltRounds);
+    const result = dbRun(
+      'INSERT INTO felhasznalok (nev, felhasznalonev, jelszo, szerep) VALUES (?, ?, ?, ?)',
+      [nev, felhasznalonev, hashedPassword, szerep]
+    );
+    const ujFelhasznalo = dbGet('SELECT id, nev, felhasznalonev, szerep FROM felhasznalok WHERE id = ?', [result.lastInsertRowid]);
+    res.status(201).json(ujFelhasznalo);
+  } catch (error) {
+    if (error.message && error.message.includes('UNIQUE constraint failed')) {
+      return res.status(409).json({ error: 'A felhasználónév már foglalt.' });
+    }
+    console.error("Új felhasználó rögzítési hiba:", error);
+    res.status(500).json({ error: 'Szerverhiba történt a felhasználó rögzítése során.' });
+  }
+});
+
+// 5.2 DELETE /api/felhasznalok/:id - Felhasználó törlése (csak admin)
+app.delete('/api/felhasznalok/:id', authenticateToken, async (req, res) => {
+  const currentUser = req.user;
+  const idToDelete = parseInt(req.params.id, 10);
+  if (isNaN(idToDelete)) {
+    return res.status(400).json({ error: 'Érvénytelen felhasználói ID.' });
+  }
+  // Jogosultság ellenőrzés: csak admin törölhet felhasználót
+  if (currentUser.szerep !== 'admin') {
+    return res.status(403).json({ error: 'Nincs jogosultsága ehhez a művelethez.' });
+  }
+  // Admin nem törölheti saját magát
+  if (currentUser.id === idToDelete) {
+    return res.status(400).json({ error: 'Adminisztrátor nem törölheti saját magát.' });
+  }
+
+  try {
+    const userToDelete = dbGet('SELECT * FROM felhasznalok WHERE id = ?', [idToDelete]);
+    if (!userToDelete) {
+      return res.status(404).json({ error: 'A megadott ID-val nem létezik felhasználó.' });
+    }
+    const result = dbRun('DELETE FROM felhasznalok WHERE id = ?', [idToDelete]);
+    if (result.changes === 0) {
+      // Ez elvileg nem fordulhat elő, ha a userToDelete ellenőrzés sikeres volt
+      return res.status(404).json({ error: 'A felhasználó törlése nem sikerült, vagy nem található.' });
+    }
+    res.status(200).json({ message: `A(z) ${idToDelete} azonosítójú felhasználó sikeresen törölve.` });
+  } catch (error) {
+    if (error.message && error.message.includes('FOREIGN KEY constraint failed')) {
+      return res.status(409).json({ error: 'A felhasználó nem törölhető, mert kapcsolódó hibabejegyzései (bejelentőként vagy javítóként) vannak.' });
+    }
+    console.error("Felhasználó törlési hiba:", error);
+    res.status(500).json({ error: 'Szerverhiba történt a felhasználó törlése során.' });
   }
 });
 

@@ -48,9 +48,20 @@ async function loadUserProfile() {
             currentUserProfile = user;
             document.getElementById('userInfo').textContent = `Bejelentkezve: ${user.nev} (${user.szerep})`;
 
-            const newFaultButton = document.getElementById('newFaultButton');
-            if (newFaultButton && (user.szerep === 'tanar' || user.szerep === 'admin')) {
-                newFaultButton.disabled = false;
+            // Új hiba bejelentése űrlap megjelenítése jogosultságtól függően
+            const newFaultFormContainer = document.getElementById('newFaultFormContainer');
+            if (newFaultFormContainer) {
+                if (user.szerep === 'tanar' || user.szerep === 'admin') {
+                    newFaultFormContainer.style.display = 'block';
+                } else {
+                    newFaultFormContainer.style.display = 'none';
+                }
+            }
+
+            // Adminisztrációs link megjelenítése, ha a felhasználó admin
+            const adminUsersLinkContainer = document.getElementById('adminUsersLinkContainer');
+            if (adminUsersLinkContainer && user.szerep === 'admin') {
+                adminUsersLinkContainer.style.display = 'block';
             }
         } else {
             console.error('Profiladatok lekérdezése sikertelen.');
@@ -162,9 +173,10 @@ async function handleNewFaultSubmit(event) {
         });
         const data = await response.json();
         if (response.ok) {
-            bootstrap.Modal.getInstance(document.getElementById('newFaultModal')).hide();
+            // bootstrap.Modal.getInstance(document.getElementById('newFaultModal')).hide(); // Eltávolítva
             loadFaults(document.getElementById('filterStatus').value);
             document.getElementById('newFaultForm').reset();
+            newFaultErrorDiv.textContent = ''; // Hibaüzenet törlése sikeres mentés után
         } else {
             newFaultErrorDiv.textContent = data.error || 'Hiba történt a mentés során.';
         }

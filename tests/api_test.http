@@ -67,6 +67,84 @@ Authorization: Bearer {{adminToken}}
 GET {{baseUrl}}/felhasznalok
 Authorization: Bearer {{tanarToken}}
 
+### 5. Felhasználók listázása (Karbantartó által) - /api/felhasznalok
+#> VÁRT EREDMÉNY: 200 OK - Felhasználók listája sikeresen lekérdezve
+GET {{baseUrl}}/felhasznalok
+Authorization: Bearer {{karbantartoToken}}
+
+### 5.1 Új felhasználó létrehozása (Admin által) - /api/felhasznalok
+#> VÁRT EREDMÉNY: 201 Created - Új felhasználó sikeresen létrehozva
+# @name ujFelhasznaloAdmin
+POST {{baseUrl}}/felhasznalok
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nev": "Teszt Tanár",
+  "felhasznalonev": "tesztt",
+  "jelszo": "TesztJelszo123",
+  "szerep": "tanar"
+}
+
+### Az új felhasználó ID-jének kinyerése a törléshez
+@ujFelhasznaloId = {{ujFelhasznaloAdmin.response.body.id}}
+
+### 5.1 Új felhasználó létrehozása (Tanár által - SIKERTELENNEK KELL LENNIE) - /api/felhasznalok
+#> VÁRT EREDMÉNY: 403 Forbidden - Nincs jogosultsága ehhez a művelethez.
+POST {{baseUrl}}/felhasznalok
+Authorization: Bearer {{tanarToken}}
+Content-Type: application/json
+
+{
+  "nev": "Teszt Karbantartó",
+  "felhasznalonev": "tesztk",
+  "jelszo": "TesztJelszo123",
+  "szerep": "karbantarto"
+}
+
+### 5.1 Új felhasználó létrehozása (Hiányzó adatokkal - SIKERTELENNEK KELL LENNIE) - /api/felhasznalok
+#> VÁRT EREDMÉNY: 400 Bad Request - Minden mező kitöltése kötelező.
+POST {{baseUrl}}/felhasznalok
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nev": "Hiányos",
+  "felhasznalonev": "hiányos",
+  "szerep": "tanar"
+}
+
+### 5.1 Új felhasználó létrehozása (Érvénytelen szerepkörrel - SIKERTELENNEK KELL LENNIE) - /api/felhasznalok
+#> VÁRT EREDMÉNY: 400 Bad Request - Érvénytelen szerepkör.
+POST {{baseUrl}}/felhasznalok
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "nev": "Rossz Szerep",
+  "felhasznalonev": "rosszszerep",
+  "jelszo": "Jelszo123",
+  "szerep": "diak"
+}
+
+### 5.2 Felhasználó törlése (Admin által) - /api/felhasznalok/:id
+#> VÁRT EREDMÉNY: 200 OK - Felhasználó sikeresen törölve
+# Feltételezzük, hogy a {{ujFelhasznaloId}} létezik és nincs hozzá kapcsolódó hiba
+DELETE {{baseUrl}}/felhasznalok/{{ujFelhasznaloId}}
+Authorization: Bearer {{adminToken}}
+
+### 5.2 Admin próbálja saját magát törölni (SIKERTELENNEK KELL LENNIE) - /api/felhasznalok/:id
+#> VÁRT EREDMÉNY: 400 Bad Request - Adminisztrátor nem törölheti saját magát.
+# Feltételezzük, hogy az admin ID-ja 1
+DELETE {{baseUrl}}/felhasznalok/1
+Authorization: Bearer {{adminToken}}
+
+### 5.2 Felhasználó törlése (Admin által - SIKERTELENNEK KELL LENNIE, mert van hibabejelentése) - /api/felhasznalok/:id
+#> VÁRT EREDMÉNY: 409 Conflict - A felhasználó nem törölhető, mert kapcsolódó hibabejegyzései vannak.
+# Feltételezzük, hogy a felhasználó ID-ja 2 (kissp) és van hibabejelentése
+DELETE {{baseUrl}}/felhasznalok/2
+Authorization: Bearer {{adminToken}}
+
 ###
 # ==============================================================================
 # Hibakezelés

@@ -12,21 +12,29 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Hibabejelentő</a>
+      <a class="navbar-brand" href="main.html">Hibabejelentő</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="main.html">Hibajegyek</a>
+          </li>
+          <li class="nav-item" id="adminUsersLinkContainer" style="display: none;">
+            <a class="nav-link" href="admin_users.html">Felhasználók</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="help.html" target="_blank">Súgó</a>
+          </li>
+        </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
             <span class="navbar-text me-3 d-flex align-items-center" id="userInfo">Betöltés...</span>
           </li>
           <li class="nav-item">
             <button class="btn btn-outline-light" id="logoutButton">Kijelentkezés</button>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="help.html">Súgó</a>
           </li>
         </ul>
       </div>
@@ -35,9 +43,29 @@
 
   <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2>Hibabejelentések</h2>
-      <button class="btn btn-primary" id="newFaultButton" data-bs-toggle="modal" data-bs-target="#newFaultModal"
-        disabled>Új hiba bejelentése</button>
+      <h2>Hibajegyek</h2>
+      <!-- Az "Új hiba bejelentése" gomb eltávolítva -->
+    </div>
+
+    <!-- Új Hiba Bejelentése Űrlap (kezdetben rejtett, JS mutatja meg jogosultságtól függően) -->
+    <div id="newFaultFormContainer" class="card mb-4" style="display: none;">
+      <div class="card-header">
+        Új hiba rögzítése
+      </div>
+      <div class="card-body">
+        <form id="newFaultForm">
+          <div class="mb-3">
+            <label for="newTerem" class="form-label">Terem</label>
+            <input type="text" class="form-control" id="newTerem" required>
+          </div>
+          <div class="mb-3">
+            <label for="newLeiras" class="form-label">Leírás</label>
+            <textarea class="form-control" id="newLeiras" rows="3" required></textarea>
+          </div>
+          <div id="newFaultError" class="text-danger mt-2"></div>
+          <button type="submit" class="btn btn-primary">Hiba bejelentése</button>
+        </form>
+      </div>
     </div>
 
     <div class="row mb-3">
@@ -69,32 +97,6 @@
           <!-- Hibák ide töltődnek be dinamikusan -->
         </tbody>
       </table>
-    </div>
-  </div>
-
-  <!-- Új Hiba Bejelentése Modális Ablak -->
-  <div class="modal fade" id="newFaultModal" tabindex="-1" aria-labelledby="newFaultModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="newFaultModalLabel">Új hiba bejelentése</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="newFaultForm">
-            <div class="mb-3">
-              <label for="newTerem" class="form-label">Terem</label>
-              <input type="text" class="form-control" id="newTerem" required>
-            </div>
-            <div class="mb-3">
-              <label for="newLeiras" class="form-label">Leírás</label>
-              <textarea class="form-control" id="newLeiras" rows="3" required></textarea>
-            </div>
-            <div id="newFaultError" class="text-danger mt-2"></div>
-            <button type="submit" class="btn btn-primary">Mentés</button>
-          </form>
-        </div>
-      </div>
     </div>
   </div>
 

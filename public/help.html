@@ -12,9 +12,8 @@
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="main.html">Hibabejelentő</a>
-      <!-- <span class="navbar-text ms-auto me-3">Súgó</span> -->
-      <a href="main.html" class="btn btn-outline-light">Vissza a főoldalra</a>
+      <a class="navbar-brand" href="#">Hibabejelentő</a>
+      <button class="btn btn-outline-light" id="closeButton" onclick="window.close()">Bezárás</button>
     </div>
   </nav>
 
@@ -32,7 +31,7 @@
       <ul>
         <li><strong>Tanár:</strong> Bejelenthet új hibákat, és megtekintheti az összes hibabejelentést.</li>
         <li><strong>Karbantartó:</strong> Megtekintheti az összes hibabejelentést, és a "Bejelentve" állapotú hibákat "Kijavítva" állapotra állíthatja.</li>
-        <li><strong>Adminisztrátor:</strong> Bejelenthet új hibákat, megtekintheti az összes hibabejelentést, és a "Bejelentve" állapotú hibákat "Kijavítva" állapotra állíthatja.</li>
+        <li><strong>Adminisztrátor:</strong> Bejelenthet új hibákat, megtekintheti az összes hibabejelentést, a "Bejelentve" állapotú hibákat "Kijavítva" állapotra állíthatja, valamint új felhasználókat vehet fel és meglévőket törölhet.</li>
       </ul>
     </section>
 
@@ -47,13 +46,17 @@
       <p>A táblázat felett található egy legördülő lista, amellyel szűrheti a hibákat állapot szerint ("Összes", "Bejelentve", "Kijavítva").</p>
 
       <h3 class="mt-3">3.3. Új hiba bejelentése</h3>
-      <p>Ha Ön <strong>Tanár</strong> vagy <strong>Adminisztrátor</strong>, a főoldalon látható "Új hiba bejelentése" gombra kattintva egy modális ablak jelenik meg. Itt megadhatja a terem nevét és a hiba rövid leírását. A dátum és a bejelentő neve automatikusan kerül rögzítésre.</p>
+      <p>Ha Ön <strong>Tanár</strong> vagy <strong>Adminisztrátor</strong>, a főoldalon, a "Hibajegyek" cím alatt egy űrlap látható. Itt megadhatja a terem nevét és a hiba rövid leírását. A "Hiba bejelentése" gombra kattintva a rendszer rögzíti a hibát. A dátum és a bejelentő neve automatikusan kerül rögzítésre.</p>
 
       <h3 class="mt-3">3.4. Hiba javítottra állítása</h3>
       <p>Ha Ön <strong>Karbantartó</strong> vagy <strong>Adminisztrátor</strong>, a "Bejelentve" állapotú hibák sorában megjelenik egy "Javítás" gomb a "Műveletek" oszlopban. Erre a gombra kattintva a hiba állapota "Kijavítva" lesz, és automatikusan rögzítésre kerül a javító neve és a javítás dátuma.</p>
 
-      <h3 class="mt-3">3.5. Kijelentkezés</h3>
-      <p>A főoldal jobb felső sarkában található "Kijelentkezés" gombra kattintva tud kilépni az alkalmazásból. Ekkor visszakerül a bejelentkezési oldalra.</p>
+      <h3 class="mt-3">3.5. Felhasználók kezelése (csak Adminisztrátoroknak)</h3>
+      <p>Ha Ön <strong>Adminisztrátor</strong>, a navigációs sávban megjelenik egy "Felhasználók" menüpont. Erre kattintva a "Felhasználók kezelése" oldalra (<code>admin_users.html</code>) jut, ahol új felhasználókat vehet fel (név, felhasználónév, jelszó, szerepkör megadásával), illetve meglévő felhasználókat törölhet (kivéve saját magát).</p>
+
+      <h3 class="mt-3">3.6. Kijelentkezés</h3>
+      <p>Minden oldalon, a navigációs sáv jobb felső sarkában található "Kijelentkezés" gombra kattintva tud kilépni az alkalmazásból. Ekkor visszakerül a bejelentkezési oldalra.</p>
+
     </section>
 
     <section class="mt-4">

@@ -24,8 +24,8 @@ Az adatokat egy adatbázisban kell tárolni, amelyet egy API-n keresztül lehet 
 2. Navigálj a projekt gyökérkönyvtárába.
 
 3. Hozz létre egy `.env` fájlt a gyökérkönyvtárban a következő tartalommal (Cseréld le a `JWT_SECRET` értékét egy titkos kulcsra):
-
-   ```env
+   
+   ```
    JWT_SECRET=generalt_eros_titkos_kulcs_legyen_itt
    DB_PATH=./hibabejelento.db
    PORT=3000
@@ -33,20 +33,18 @@ Az adatokat egy adatbázisban kell tárolni, amelyet egy API-n keresztül lehet 
 
 4. Telepítsd a függőségeket: `npm install`
 
-5. Hozz létre felhasználókat az adatbázisban. ezt  alegegyszerűbbe a `tesztadatok.sql` fájlban lévő parancsok futtatásával tudod megtenni:
-
+5. Hozz létre felhasználókat az adatbázisban. Ezt  alegegyszerűbbe a `tesztadatok.sql` fájlban lévő parancsok futtatásával tudod megtenni:
    `sqlite3 hibabejelento.db < tesztadatok.sql`
-
-   A tesztadatokban nem csak felhasználók vannak, hanem néhány bekelentett/kijavított hiba is a teszteléshez.
+   A tesztadatokban nem csak felhasználók vannak, hanem néhány bejelentett/kijavított hiba is a teszteléshez.
 
 ### Indítás
 
 * A szerver indítása: `npm start` vagy `node server.js`
-* Az alkalmazás elérhető lesz a `http://localhost:5000` címen.
+* Az alkalmazás elérhető lesz a `http://localhost:5000` címen).
 
 ## Dokumentáció
 
-* A specifikáció, valamint az adatbázis, a frontend és a backend dokumentációja a [docs mappában](docs) található.
+* A specifikáció, valamint a frontend és a backend dokumentációja a [docs mappában](docs) található.
 
 ## Tesztelés
 

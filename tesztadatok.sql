@@ -31,6 +31,6 @@ INSERT INTO felhasznalok (nev, felhasznalonev, jelszo, szerep) VALUES
 INSERT INTO hibak (datum, bejelento_id, terem, leiras, allapot, javito_id, javitas_datuma) VALUES
   ('2025-06-01', 1, '101-es terem', 'Eltört egy szék.', 'bejelentve', NULL, NULL),
   ('2025-06-01', 2, 'Folyosó', 'A folyosón nem ég a lámpa.', 'bejelentve', NULL, NULL),
-  ('2025-05-30', 1, '201-es terem', 'A projektor nem működik.', 'kijavítva', 3, '2025-05-31'),
-  ('2025-05-28', 2, 'Tanári', 'Csöpög a csap.', 'kijavítva', 4, '2025-05-29'),
+  ('2025-05-30', 1, '201-es terem', 'A projektor nem működik.', 'kijavítva', 4, '2025-05-31'),
+  ('2025-05-28', 2, 'Tanári', 'Csöpög a csap.', 'kijavítva', 5, '2025-05-29'),
   ('2025-06-02', 1, 'Könyvtár', 'Eltört polc.', 'bejelentve', NULL, NULL);

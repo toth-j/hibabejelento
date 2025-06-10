@@ -9,7 +9,7 @@
     2. A "Felhasználónév" mezőbe írd be: `kissp`.
     3. A "Jelszó" mezőbe írd be: `kissp`.
     4. Kattints a "Bejelentkezés" gombra.
-  * **Várt Eredmény:** A felhasználó átirányítódik a főoldalra (`main.html`). A navigációs sávban megjelenik a "Bejelentkezve: Kiss Péter (tanar)" szöveg. Az "Új hiba bejelentése" gomb aktív.
+  * **Várt Eredmény:** A felhasználó átirányítódik a főoldalra (`main.html`). A navigációs sávban megjelenik a "Bejelentkezve: Kiss Péter (tanar)" szöveg. Az új hiba bejelentésére szolgáló űrlap (`newFaultFormContainer`) látható.
 
 * **Teszteset LK-01: Sikeres bejelentkezés karbantartóként**
   
@@ -20,7 +20,7 @@
     2. A "Felhasználónév" mezőbe írd be: `szabob`.
     3. A "Jelszó" mezőbe írd be: `szabob`.
     4. Kattints a "Bejelentkezés" gombra.
-  * **Várt Eredmény:** A felhasználó átirányítódik a főoldalra. A navigációs sávban megjelenik a "Bejelentkezve: Szabó Béla (karbantarto)" szöveg. Az "Új hiba bejelentése" gomb inaktív.
+  * **Várt Eredmény:** A felhasználó átirányítódik a főoldalra. A navigációs sávban megjelenik a "Bejelentkezve: Szabó Béla (karbantarto)" szöveg. Az új hiba bejelentésére szolgáló űrlap (`newFaultFormContainer`) nem látható.
 
 * **Teszteset LA-01: Sikeres bejelentkezés adminisztrátorként**
   
@@ -31,7 +31,7 @@
     2. A "Felhasználónév" mezőbe írd be: `admin`.
     3. A "Jelszó" mezőbe írd be: `Minad123`.
     4. Kattints a "Bejelentkezés" gombra.
-  * **Várt Eredmény:** A felhasználó átirányítódik a főoldalra. A navigációs sávban megjelenik a "Bejelentkezve: Admin (admin)" szöveg. Az "Új hiba bejelentése" gomb aktív.
+  * **Várt Eredmény:** A felhasználó átirányítódik a főoldalra. A navigációs sávban megjelenik a "Bejelentkezve: Admin (admin)" szöveg. Az új hiba bejelentésére szolgáló űrlap (`newFaultFormContainer`) látható. A navigációs sávban megjelenik a "Felhasználók" link.
 
 * **Teszteset L-02: Sikertelen bejelentkezés hibás adatokkal**
   
@@ -111,40 +111,37 @@
   * **Cél:** Ellenőrizni, hogy egy tanár tud-e új hibát rögzíteni.
   * **Előfeltételek:** A felhasználó tanárként van bejelentkezve.
   * **Lépések:**
-    1. Kattints az "Új hiba bejelentése" gombra.
-    2. A megjelenő modális ablakban töltsd ki a "Terem" mezőt (pl. "101-es terem").
-    3. Töltsd ki a "Leírás" mezőt (pl. "Nem működik a projektor.").
-    4. Kattints a "Mentés" gombra.
-  * **Várt Eredmény:** A modális ablak bezáródik. A hibák listája frissül, és az újonnan rögzített hiba megjelenik a lista elején "bejelentve" állapotban, a bejelentő neve a bejelentkezett tanár neve.
+    1. A főoldalon található "Új hiba rögzítése" űrlapon töltsd ki a "Terem" mezőt (pl. "101-es terem").
+    2. Töltsd ki a "Leírás" mezőt (pl. "Nem működik a projektor.").
+    3. Kattints a "Hiba bejelentése" gombra.
+  * **Várt Eredmény:** Az űrlap mezői kiürülnek. A hibák listája frissül, és az újonnan rögzített hiba megjelenik a lista elején "bejelentve" állapotban, a bejelentő neve a bejelentkezett tanár neve.
 
 * **Teszteset HÚ-02: Új hiba bejelentése adminisztrátorként**
   
   * **Cél:** Ellenőrizni, hogy egy adminisztrátor tud-e új hibát rögzíteni.
   * **Előfeltételek:** A felhasználó adminisztrátorként van bejelentkezve.
   * **Lépések:**
-    1. Kattints az "Új hiba bejelentése" gombra.
-    2. A megjelenő modális ablakban töltsd ki a "Terem" mezőt (pl. "Tornaterem").
-    3. Töltsd ki a "Leírás" mezőt (pl. "Lyukas a labda.").
-    4. Kattints a "Mentés" gombra.
-  * **Várt Eredmény:** A modális ablak bezáródik. A hibák listája frissül, és az újonnan rögzített hiba megjelenik a lista elején "bejelentve" állapotban, a bejelentő neve a bejelentkezett adminisztrátor neve.
+    1. A főoldalon található "Új hiba rögzítése" űrlapon töltsd ki a "Terem" mezőt (pl. "Tornaterem").
+    2. Töltsd ki a "Leírás" mezőt (pl. "Lyukas a labda.").
+    3. Kattints a "Hiba bejelentése" gombra.
+  * **Várt Eredmény:** Az űrlap mezői kiürülnek. A hibák listája frissül, és az újonnan rögzített hiba megjelenik a lista elején "bejelentve" állapotban, a bejelentő neve a bejelentkezett adminisztrátor neve.
 
 * **Teszteset HÚ-03: Új hiba bejelentése karbantartóként (sikertelen)**
   
   * **Cél:** Ellenőrizni, hogy egy karbantartó nem tud új hibát rögzíteni.
   * **Előfeltételek:** A felhasználó karbantartóként van bejelentkezve.
   * **Lépések:**
-    1. Figyeld meg az "Új hiba bejelentése" gomb állapotát a főoldalon.
-  * **Várt Eredmény:** Az "Új hiba bejelentése" gomb inaktív (nem kattintható).
+    1. Figyeld meg, hogy az "Új hiba rögzítése" űrlap (`newFaultFormContainer`) látható-e a főoldalon.
+  * **Várt Eredmény:** Az "Új hiba rögzítése" űrlap nem látható.
 
 * **Teszteset HÚ-04: Új hiba bejelentése hiányzó mezőkkel**
   
   * **Cél:** Ellenőrizni a rendszer viselkedését, ha az új hiba űrlap nincs megfelelően kitöltve.
   * **Előfeltételek:** A felhasználó tanárként vagy adminisztrátorként van bejelentkezve.
   * **Lépések:**
-    1. Kattints az "Új hiba bejelentése" gombra.
-    2. Hagyd üresen a "Terem" mezőt, de töltsd ki a "Leírás" mezőt.
-    3. Kattints a "Mentés" gombra.
-  * **Várt Eredmény:** Hibaüzenet jelenik meg a modális ablakban (pl. "A terem és a leírás megadása kötelező."). A modális ablak nem záródik be. A hiba nem kerül rögzítésre. (Ismételd meg a tesztet úgy is, hogy a "Leírás" mezőt hagyod üresen.)
+    1. A főoldalon található "Új hiba rögzítése" űrlapon hagyd üresen a "Terem" mezőt, de töltsd ki a "Leírás" mezőt.
+    2. Kattints a "Hiba bejelentése" gombra.
+  * **Várt Eredmény:** Hibaüzenet jelenik meg az űrlap alatt a `newFaultError` div-ben (pl. "A terem és a leírás megadása kötelező."). Az űrlap nem ürül ki. A hiba nem kerül rögzítésre. (Ismételd meg a tesztet úgy is, hogy a "Leírás" mezőt hagyod üresen.)
 
 * **Teszteset HJ-01: Hiba kijavítottra állítása karbantartóként**
   
@@ -183,6 +180,75 @@
     1. Keresd meg a hibák listájában az egyik "kijavítva" állapotú hibát.
     2. Figyeld meg a hiba sorának "Műveletek" oszlopát. (Ha a gomb nem látszik, a teszt sikeres. Ha valamilyen okból mégis látszana és kattintható lenne, próbáld meg.)
   * **Várt Eredmény:** A "Javítás" gomb nem látható a már kijavított hibák sorában. Ha API hívással próbálnánk, a szervernek 409 Conflict hibát kellene visszaadnia ("A hiba már ki van javítva.").
+
+**Felhasználókezelés tesztelése (Adminisztrátor)**
+
+* **Teszteset UM-01: Felhasználókezelő oldal elérése adminisztrátorként**
+  * **Cél:** Ellenőrizni, hogy az adminisztrátor eléri-e a felhasználókezelő oldalt.
+  * **Előfeltételek:** A felhasználó adminisztrátorként van bejelentkezve.
+  * **Lépések:**
+    1. Kattints a navigációs sávban a "Felhasználók" linkre.
+  * **Várt Eredmény:** Az alkalmazás átirányít az `admin_users.html` oldalra. Az oldalon megjelenik az "Új felhasználó hozzáadása" űrlap és a "Meglévő felhasználók" táblázat.
+
+* **Teszteset UM-02: Új felhasználó hozzáadása adminisztrátorként**
+  * **Cél:** Ellenőrizni az új felhasználó sikeres hozzáadását.
+  * **Előfeltételek:** A felhasználó adminisztrátorként az `admin_users.html` oldalon van.
+  * **Lépések:**
+    1. Az "Új felhasználó hozzáadása" űrlapon töltsd ki a "Név" mezőt (pl. "Teszt Elek").
+    2. Töltsd ki a "Felhasználónév" mezőt (pl. "tesztelek").
+    3. Töltsd ki a "Jelszó" mezőt (pl. "Jelszo123").
+    4. Válaszd ki a "Szerepkör" legördülő listából a "tanar" opciót.
+    5. Kattints a "Felhasználó hozzáadása" gombra.
+  * **Várt Eredmény:** Az űrlap kiürül. A "Meglévő felhasználók" táblázat frissül, és az új felhasználó ("Teszt Elek", "tesztelek", "tanar") megjelenik a listában. Egy sikeres létrehozásról szóló üzenet jelenik meg (pl. alert).
+
+* **Teszteset UM-03: Felhasználó törlése adminisztrátorként**
+  * **Cél:** Ellenőrizni egy felhasználó sikeres törlését.
+  * **Előfeltételek:** A felhasználó adminisztrátorként az `admin_users.html` oldalon van. Létezik egy törölhető felhasználó (pl. az előző tesztesetben létrehozott "tesztelek").
+  * **Lépések:**
+    1. Keresd meg a "tesztelek" felhasználót a "Meglévő felhasználók" táblázatban.
+    2. Kattints a felhasználó sorában található "Törlés" gombra.
+    3. A megjelenő megerősítő kérdésre kattints az "OK" gombra.
+  * **Várt Eredmény:** A "Meglévő felhasználók" táblázat frissül, és a "tesztelek" felhasználó eltűnik a listából. Egy sikeres törlésről szóló üzenet jelenik meg.
+
+* **Teszteset UM-04: Adminisztrátor saját magát próbálja törölni (sikertelen)**
+  * **Cél:** Ellenőrizni, hogy az adminisztrátor nem tudja törölni saját magát.
+  * **Előfeltételek:** A felhasználó adminisztrátorként (`admin`) az `admin_users.html` oldalon van.
+  * **Lépések:**
+    1. Keresd meg az `admin` felhasználót a "Meglévő felhasználók" táblázatban.
+  * **Várt Eredmény:** Az `admin` felhasználó sorában nincs "Törlés" gomb, vagy ha van és kattintható, a törlés sikertelen, és hibaüzenet jelenik meg (pl. "Adminisztrátor nem törölheti saját magát.").
+
+* **Teszteset UM-05: Felhasználó törlése, akihez hiba kapcsolódik (sikertelen)**
+  * **Cél:** Ellenőrizni, hogy nem lehet törölni olyan felhasználót, akihez hibabejelentés kapcsolódik.
+  * **Előfeltételek:** A felhasználó adminisztrátorként az `admin_users.html` oldalon van. Létezik egy felhasználó (pl. `kissp`, ID: 2), akihez hibabejelentés tartozik a `tesztadatok.sql` alapján.
+  * **Lépések:**
+    1. Keresd meg a `kissp` felhasználót a "Meglévő felhasználók" táblázatban.
+    2. Kattints a felhasználó sorában található "Törlés" gombra.
+    3. A megjelenő megerősítő kérdésre kattints az "OK" gombra.
+  * **Várt Eredmény:** A felhasználó nem törlődik. Hibaüzenet jelenik meg (pl. "A felhasználó nem törölhető, mert kapcsolódó hibabejegyzései vannak.").
+
+* **Teszteset UM-06: Felhasználókezelő oldal elérése nem adminisztrátorként (sikertelen)**
+  * **Cél:** Ellenőrizni, hogy nem adminisztrátor felhasználók nem érik el a felhasználókezelő oldalt.
+  * **Előfeltételek:** A felhasználó tanárként vagy karbantartóként van bejelentkezve.
+  * **Lépések:**
+    1. Figyeld meg a navigációs sávot.
+    2. Próbáld meg közvetlenül a böngésző címsorába beírni az `admin_users.html` URL-jét.
+  * **Várt Eredmény:** A navigációs sávban nem látható a "Felhasználók" link. Ha közvetlenül próbálja elérni az oldalt, egy "Nincs jogosultságod ennek az oldalnak a megtekintéséhez." üzenet jelenik meg, vagy átirányítódik a főoldalra.
+
+**Súgó oldal tesztelése**
+
+* **Teszteset S-01: Súgó oldal megnyitása új lapon**
+  * **Cél:** Ellenőrizni, hogy a Súgó link új böngészőlapon nyílik-e meg.
+  * **Előfeltételek:** A felhasználó a `main.html` vagy `admin_users.html` oldalon van.
+  * **Lépések:**
+    1. Kattints a navigációs sávban a "Súgó" linkre.
+  * **Várt Eredmény:** A `help.html` oldal egy új böngészőlapon vagy fülön nyílik meg.
+
+* **Teszteset S-02: Súgó oldal bezárása**
+  * **Cél:** Ellenőrizni a "Bezárás" gomb működését a Súgó oldalon.
+  * **Előfeltételek:** A `help.html` oldal meg van nyitva (lehetőleg az előző tesztesetből).
+  * **Lépések:**
+    1. Kattints a "Bezárás" gombra a Súgó oldal navigációs sávjában.
+  * **Várt Eredmény:** Az aktuális böngészőlap/fül, amelyen a Súgó oldal volt, bezáródik. (Megjegyzés: Ennek működése böngészőfüggő lehet, és előfordulhat, hogy csak a szkript által megnyitott ablakokat zárja be.)
 
 **Felhasználói felület (UI) tesztelése**
 
