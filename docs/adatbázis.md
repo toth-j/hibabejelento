@@ -64,7 +64,7 @@
       FOREIGN KEY (javito_id) REFERENCES felhasznalok(id)
     );
 
-* * *Rendben! Íme az **SQLite tesztadatok** a módosításaid figyelembevételével:
+* * 
 
 ## Tesztadatok
 
@@ -102,4 +102,4 @@ Ezekkel a tesztadatokkal lehet tesztelni:
 
 Új tesztadatbázis létrehozásához a parancsok a *tesztadatok.sql* fájlba kerültek. Futtatás:
 
-`sqlite3 hibabejelento.db < tesztadatok.sql`
+`sqlite3 hibabejelento.db < tests/tesztadatok.sql`

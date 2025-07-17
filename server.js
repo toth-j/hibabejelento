@@ -1,22 +1,16 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
 const Database = require('better-sqlite3');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET;
 const DB_PATH = process.env.DB_PATH || './hibabejelento.db';
 
-app.use(cors());
+const app = express();
 app.use(express.json());
-
-// Statikus fájlok kiszolgálása a 'public' mappából
-const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 
 // Adatbázis kapcsolat inicializálása
 let db;
@@ -306,13 +300,9 @@ app.listen(PORT, () => {
 });
 
 // Adatbázis kapcsolat bezárása a program leállásakor
-function gracefulShutdown() {
-  if (db) {
+process.on('exit', () => {
     db.close();
-    console.log('Adatbázis kapcsolat bezárva.');
-  }
-  process.exit(0);
-}
-
-process.on('SIGINT', gracefulShutdown);
-process.on('SIGTERM', gracefulShutdown);
+    console.log('Adatbázis kapcsolat lezárva.');
+});
+process.on('SIGINT', () => process.exit());
+process.on('SIGTERM', () => process.exit());

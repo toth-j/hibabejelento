@@ -16,13 +16,13 @@ Ez a dokumentáció a Hibabejelentő alkalmazás frontend részének működés�
 
 ### Áttekintés
 
-A frontend nágy fő részből áll:
+A frontend négy fő részből áll:
 
 1. **Bejelentkezési oldal** (`index.html`, `login.js`): Felhasználói hitelesítésért felelős.
 2. **Fő alkalmazás oldal** (`main.html`, `main-app.js`): A bejelentkezett felhasználók itt tudják megtekinteni és kezelni a hibabejelentéseket, valamint itt történik a profiladatok megjelenítése és a kijelentkezés.
 3. **Felhasználókezelő oldal** (`admin_users.html`, `admin_users.js`): Csak adminisztrátorok számára elérhető oldal új felhasználók felvételére és meglévők törlésére.
 4. **Súgó oldal** (`help.html`): Statikus információs oldal az alkalmazás használatáról.
-Az alkalmazás a `server.js` által biztosított API végpontokkal kommunikál (alapértelmezett URL: `http://localhost:3000/api`).
+   Az alkalmazás a `server.js` által biztosított API végpontokkal kommunikál (alapértelmezett URL: `http://localhost:3000/api`).
 
 ### Bejelentkezési oldal
 
@@ -112,10 +112,12 @@ Az alkalmazás a `server.js` által biztosított API végpontokkal kommunikál
 ### Felhasználókezelő oldal (Adminoknak)
 
 - **Fájlok:**
+  
   - `public/admin_users.html`: A felhasználókezelő oldal HTML struktúrája, beleértve az új felhasználó felvételére szolgáló űrlapot és a meglévő felhasználók listáját.
   - `public/admin_users.js`: A felhasználókezelő oldal dinamikus működéséért felelős JavaScript kód.
 
 - **Működés (`admin_users.js`):**
+  
   - **Globális változók:**
     - `API_BASE_URL`: Az API végpontok alap URL-je.
     - `currentUserProfile`: Az aktuálisan bejelentkezett adminisztrátor profiladatait tárolja.
@@ -166,7 +168,7 @@ Az alkalmazás a `server.js` által biztosított API végpontokkal kommunikál
 
 ### Stíluslap
 
-<a name="stíluslap"></a> <!-- Anchor for ToC -->
+
 
 - `public/style.css`: Egyedi CSS szabályokat tartalmaz, amelyek kiegészítik a Bootstrap által biztosított stílusokat.
 

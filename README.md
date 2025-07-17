@@ -34,13 +34,13 @@ Az adatokat egy adatbázisban kell tárolni, amelyet egy API-n keresztül lehet 
 4. Telepítsd a függőségeket: `npm install`
 
 5. Hozz létre felhasználókat az adatbázisban. Ezt  alegegyszerűbbe a `tesztadatok.sql` fájlban lévő parancsok futtatásával tudod megtenni:
-   `sqlite3 hibabejelento.db < tesztadatok.sql`
+   `sqlite3 hibabejelento.db < tests/tesztadatok.sql`
    A tesztadatokban nem csak felhasználók vannak, hanem néhány bejelentett/kijavított hiba is a teszteléshez.
 
 ### Indítás
 
 * A szerver indítása: `npm start` vagy `node server.js`
-* Az alkalmazás elérhető lesz a `http://localhost:5000` címen).
+* Az alkalmazás elérhető lesz a `http://localhost:5000` címen.
 
 ## Dokumentáció
 

@@ -34,7 +34,7 @@ Az iskola portáján lévő füzetet kiváltó digitális hibabejelentő és -ny
 
 #### **2.3. Hibák listázása (Minden bejelentkezett felhasználó számára)**
 
-* A hibák listája dátum szerint csökkenő sorrendben jelenik meg (legfrissebbek elöl).
+* A hibák listája dátum szerint csökkenő sorrendben jelenik meg (a legfrissebbek elöl).
 * Minden hiba esetén megjelenített adatok:
   * Bejelentés dátuma
   * Terem
@@ -54,7 +54,7 @@ Az iskola portáján lévő füzetet kiváltó digitális hibabejelentő és -ny
   * A javító felhasználó (ID alapján).
   * A javítás dátuma (aktuális dátum, YYYY-MM-DD formátumban).
 
-#### **2.5. Felhasználókezelés (Csak Adminisztrátorok számára)**
+#### **2.5. Felhasználókezelés (csak adminisztrátorok számára)**
 
 * **Új felhasználó felvétele**: Név, egyedi felhasználónév, jelszó és szerepkör (tanar, karbantarto, admin) megadásával.
 * **Felhasználók listázása**: ID, név, felhasználónév, szerepkör.
@@ -77,7 +77,7 @@ Az iskola portáján lévő füzetet kiváltó digitális hibabejelentő és -ny
   * "Új hiba rögzítése" űrlap: Terem és leírás beviteli mezők, "Hiba bejelentése" gomb. Ez az űrlap csak tanárok és adminisztrátorok számára látható.
   * Szűrő: Legördülő menü a hibák állapot szerinti szűrésére.
   * Hibák táblázata: A 2.3. pontban leírt adatokkal és műveletekkel.
-* **Felhasználókezelő oldal (`admin_users.html` - csak Adminisztrátoroknak)**:
+* **Felhasználókezelő oldal (`admin_users.html` - csak adminisztrátoroknak)**:
   * Navigációs sáv (megegyezik a főoldaléval, "Felhasználók" link aktív).
   * "Új felhasználó hozzáadása" űrlap: Név, felhasználónév, jelszó, szerepkör beviteli mezők, "Felhasználó hozzáadása" gomb.
   * "Meglévő felhasználók" táblázat: ID, név, felhasználónév, szerepkör, "Törlés" gomb (kivéve saját magánál).
@@ -90,7 +90,7 @@ Az iskola portáján lévő füzetet kiváltó digitális hibabejelentő és -ny
 ### **4. Technikai követelmények**
 
 * **Backend**: Node.js + Express.js keretrendszerrel készített REST API.
-* **Adatbázis**: SQLite.
+* **Adatbázis**: SQLite, better-sqlite3 csomaggal.
 * **Frontend**: HTML, CSS, vanilla JavaScript. Bootstrap 5 keretrendszer a reszponzív kialakításért és stílusért.
 * **Hitelesítés**: Jelszó-hashelés (bcrypt.js), JWT alapú munkamenet-kezelés.
 * **Verziókezelés**: Git, GitHub.
